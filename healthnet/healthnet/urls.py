@@ -18,8 +18,8 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$s', HealthNetView.as_view(), name='landing')
-    url(r'^/users/', include('users.urls'))
-    url(r'^/calendar/', include('appointments.urls'))
-    url(r'^/logging/', include('activity_logging.urls'))
+    url(r'^$s', HealthNetView.as_view(), name='landing'),
+    url(r'^/users/', include('users.urls')),
+    url(r'^/calendar/', include('appointments.urls')),
+    url(r'^/logging/', include('activity_logging.urls')),
 ]
