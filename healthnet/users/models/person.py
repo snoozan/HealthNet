@@ -8,7 +8,7 @@ import datetime
 from .hospital import Hospital
 
 class Person(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)  
     hospital = models.ForeignKey(
         Hospital,
@@ -22,10 +22,11 @@ class Person(models.Model):
         )
 
 @receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
+def create_patient_profile(sender, instance, created, **kwargs):
     if created:
-        Person.objects.create(user=instance)
-    instance.Person.save()
+        Patient.objects.create(user=instance)
+    print(type(instance))
+    instance.person.save()
 
 class PersonForm(ModelForm):
     class Meta:
@@ -55,7 +56,7 @@ class SignupForm(UserCreationForm):
 
 
 class Nurse(Person):
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, blank=True)
     class Meta:
         permissions = (
                 ("admit", "Admit patient"),
@@ -68,7 +69,7 @@ class NurseForm(ModelForm):
         fields = '__all__'
 
 class Doctor(Person):
-    specialty_field = models.CharField(max_length=100)
+    specialty_field = models.CharField(max_length=100, blank=True)
     class Meta:
         permissions = (
                 ("admit", "Admit patient"),
@@ -81,7 +82,6 @@ class DoctorForm(ModelForm):
         fields = '__all__'
 
 class Admin(Person):
-    position = models.CharField(max_length=100)
     class Meta:
         permissions = (
                 ("transfer", "Transfer patient"),

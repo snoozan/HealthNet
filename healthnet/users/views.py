@@ -7,6 +7,9 @@ from .models.person import PersonForm, PatientForm, SignupForm
 from .models.hospital import HospitalForm
 
 # Create your views here.
+@login_required
+def home(request):
+    return render(request, 'users/home.html')
 
 @permission_required('update_patient')
 @login_required
@@ -51,13 +54,13 @@ def signup_patient(request):
         if patient_form.is_valid():
             patient = patient_form.save()
             patient.refresh_from_db()
-            patient.patient.dob = patient_form.cleaned_data.get('dob')
+            patient.person.birth_date = patient_form.cleaned_data.get('dob')
             patient.save()
             raw_password = patient_form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
+            user = authenticate(username=patient.username, password=raw_password)
             login(request, user)
             messages.success(request, 'Your profile was successfully updated!')
-            return redirect('users/login.html')
+            return redirect('login')
         else:
             messages.error(request, 'Please correct the error below.')
     else:
