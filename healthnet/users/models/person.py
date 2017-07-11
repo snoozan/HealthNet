@@ -11,6 +11,10 @@ class Person(models.Model):
         Hospital,
         on_delete=models.CASCADE,
     )
+    class Meta:
+        permissions = (
+                ("signup", "Signup as a user"),
+        )
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -30,6 +34,11 @@ class Patient(Person):
     dob = models.DateField(max_length=8)
     admitted = models.BooleanField(default=False)
 
+    class Meta:
+        permissions = (
+                ("update_patient", "Signup as a user"),
+        )
+
 class PatientForm(ModelForm):
     class Meta:
         model = Patient
@@ -37,6 +46,11 @@ class PatientForm(ModelForm):
 
 class Nurse(Person):
     title = models.CharField(max_length=100)
+    class Meta:
+        permissions = (
+                ("admit", "Admit patient"),
+                ("release", "Release patient"),
+        )
 
 class NurseForm(ModelForm):
     class Meta:
@@ -44,7 +58,12 @@ class NurseForm(ModelForm):
         fields = '__all__'
 
 class Doctor(Person):
-    specialty_field = moels.CharField(max_length=100)
+    specialty_field = models.CharField(max_length=100)
+    class Meta:
+        permissions = (
+                ("admit", "Admit patient"),
+                ("release", "Release patient"),
+        )
 
 class DoctorForm(ModelForm):
     class Meta:
@@ -53,6 +72,11 @@ class DoctorForm(ModelForm):
 
 class Admin(Person):
     position = models.CharField(max_length=100)
+    class Meta:
+        permissions = (
+                ("transfer", "Transfer patient"),
+                ("update", "Update admin/doctor/nurse"),
+        )
 
 class AdminForm(ModelForm):
     class Meta:

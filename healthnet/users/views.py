@@ -1,5 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib import messages
+from django.db import transaction
+from .models.person import PersonForm, PatientForm
+from .models.hospital import HospitalForm
 
 # Create your views here.
 
@@ -8,43 +13,53 @@ from django.contrib.auth import authenticate, login
 @transaction.atomic
 def update_profile(request):
     if request.method == 'POST':
-        user_form = PersonForm(request.POST, instance=request.user)
-        profile_form = PatientForm(request.POST, instance=request.user.profile)
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
-            messages.success(request, _('Your profile was successfully updated!'))
-            return redirect('settings:profile')
-        else:
-            messages.error(request, _('Please correct the error below.'))
-    else:
-        user_form = PersonForm(instance=request.user)
-        profile_form = PatientForm(instance=request.user.profile)
-    return render(request, 'profiles/profile.html', {
-        'patient_form': user_form,
-        'profile_form': profile_form
-    })
-
-@permission_required('signup')
-@login_required
-@transaction.atomic
-def signup_patient(request): 
-    if request.method == 'POST':
-        user_form = PersonForm(request.POST, instance=request.user)
         patient_form = PatientForm(request.POST, instance=request.user.profile)
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
-            patient_form.save()
-            messages.success(request, _('Your profile was successfully updated!'))
+            profile_form.save()
+            messages.success(request, 'Your profile was successfully updated!')
             return redirect('settings:profile')
         else:
             messages.error(request, _('Please correct the error below.'))
     else:
-        user_form = PersonForm(instance=request.user)
-        patient_form = PatientForm(instance=request.user.profile)
+        profile_form = PatientForm(instance=request.user.profile)
     return render(request, 'profiles/profile.html', {
-        'patient_form': person_form,
-        'profile_form': patient_form
+        'patient_form': patient_form,
+    })
+
+@transaction.atomic
+def create_hospital(request):
+    if request.method == 'POST':
+        hospital_form = HospitalForm(request.POST)
+        if hospital_form.is_valid():
+            hospital_form.save()
+            messages.success(request, "Hospital successfully created!")
+            return redirect('signup')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        hospital_form = HospitalForm
+    return render(request, 'users/hospital.html', {
+            'hospital_form' : hospital_form,
+    })
+
+
+@transaction.atomic
+def signup_patient(request): 
+    print(request)
+    if request.method == 'POST':
+        patient_form = PatientForm(request.POST)
+        if patient_form.is_valid():
+            patient_form.save()
+            messages.success(request, 'Your profile was successfully updated!')
+            return redirect('users/signup.html')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        patient_form = PatientForm
+
+    return render(request, 'users/login.html', {
+        'patient_form': patient_form
     })
 
 @permission_required('update')
@@ -52,20 +67,16 @@ def signup_patient(request):
 @transaction.atomic
 def update_nurse(request): 
     if request.method == 'POST':
-        user_form = PersonForm(request.POST, instance=request.user)
         nurse_form = NurseForm(request.POST, instance=request.user.profile)
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
+        if nurse_form.is_valid():
             nurse_form.save()
             messages.success(request, _('Your profile was successfully updated!'))
             return redirect('settings:profile')
         else:
             messages.error(request, _('Please correct the error below.'))
     else:
-        user_form = PersonForm(instance=request.user)
         nurse_form = NurseForm(instance=request.user.profile)
     return render(request, 'profiles/profile.html', {
-        'patient_form': person_form,
         'nurse_form': nurse_form
     })
 
@@ -74,20 +85,16 @@ def update_nurse(request):
 @transaction.atomic
 def update_doctor(request): 
     if request.method == 'POST':
-        user_form = PersonForm(request.POST, instance=request.user)
         doctor_form = DoctorForm(request.POST, instance=request.user.profile)
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
+        if doctor_form.is_valid():
             doctor_form.save()
             messages.success(request, _('Your profile was successfully updated!'))
             return redirect('settings:profile')
         else:
             messages.error(request, _('Please correct the error below.'))
     else:
-        user_form = PersonForm(instance=request.user)
         doctor_form = DoctorForm(instance=request.user.profile)
     return render(request, 'profiles/profile.html', {
-        'patient_form': person_form,
         'doctor_form': doctor_form
     })
 
@@ -96,9 +103,8 @@ def update_doctor(request):
 @transaction.atomic
 def update_admin(request): 
     if request.method == 'POST':
-        user_form = PersonForm(request.POST, instance=request.user)
         admin_form = AdminForm(request.POST, instance=request.user.profile)
-        if user_form.is_valid() and profile_form.is_valid():
+        if admin_form.is_valid():
             user_form.save()
             admin_form.save()
             messages.success(request, _('Your profile was successfully updated!'))
@@ -106,10 +112,8 @@ def update_admin(request):
         else:
             messages.error(request, _('Please correct the error below.'))
     else:
-        user_form = PersonForm(instance=request.user)
         admin_form = AdminForm(instance=request.user.profile)
     return render(request, 'profiles/profile.html', {
-        'patient_form': person_form,
         'admin_form': admin_form
     })
 
