@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.db import transaction
-from .models.person import PersonForm, PatientForm
+from .models.person import PersonForm, PatientForm, SignupForm
 from .models.hospital import HospitalForm
 
 # Create your views here.
@@ -46,19 +46,24 @@ def create_hospital(request):
 
 @transaction.atomic
 def signup_patient(request): 
-    print(request)
     if request.method == 'POST':
-        patient_form = PatientForm(request.POST)
+        patient_form = SignupForm(request.POST)
         if patient_form.is_valid():
-            patient_form.save()
+            patient = patient_form.save()
+            patient.refresh_from_db()
+            patient.patient.dob = patient_form.cleaned_data.get('dob')
+            patient.save()
+            raw_password = patient_form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
             messages.success(request, 'Your profile was successfully updated!')
-            return redirect('users/signup.html')
+            return redirect('users/login.html')
         else:
             messages.error(request, 'Please correct the error below.')
     else:
-        patient_form = PatientForm
+        patient_form = SignupForm()
 
-    return render(request, 'users/login.html', {
+    return render(request, 'users/signup.html', {
         'patient_form': patient_form
     })
 
@@ -105,7 +110,6 @@ def update_admin(request):
     if request.method == 'POST':
         admin_form = AdminForm(request.POST, instance=request.user.profile)
         if admin_form.is_valid():
-            user_form.save()
             admin_form.save()
             messages.success(request, _('Your profile was successfully updated!'))
             return redirect('settings:profile')
