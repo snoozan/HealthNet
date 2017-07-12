@@ -30,7 +30,6 @@ def home(request):
 
 @login_required
 @permission_required('users.update_patient')
-@transaction.atomic
 def update_profile(request):
     if request.method == 'POST':
         patient_form = PatientForm(request.POST, instance=request.user.profile)
@@ -48,7 +47,6 @@ def update_profile(request):
 
 
 @login_required
-@transaction.atomic
 def create_hospital(request):
     if request.method == 'POST':
         hospital_form = HospitalForm(request.POST)
@@ -65,7 +63,6 @@ def create_hospital(request):
     })
 
 
-@transaction.atomic
 def signup_patient(request):
     if request.method == 'POST':
         patient_form = SignupForm(request.POST)
@@ -163,7 +160,6 @@ def admit_patient(request):
 
 @permission_required('users.release')
 @login_required
-@transaction.atomic
 def release_patient(request):
     if request.method == 'POST':
         patient = Patient.objects.get(pk=request.patientid)
@@ -177,7 +173,6 @@ def release_patient(request):
 
 @permission_required('users.transfer')
 @login_required
-@transaction.atomic
 def transfer_patient(request):
     if request.method == 'POST':
         patient = Patient.objects.get(pk=request.patientid)
