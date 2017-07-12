@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
+from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.forms import ModelForm, DateField
@@ -8,7 +9,7 @@ import datetime
 from .hospital import Hospital
 
 class Person(models.Model):
-    name = models.CharField(max_length=100, blank=True)
+    name = models.CharField(max_length=100, default="")
     user = models.OneToOneField(User, on_delete=models.CASCADE)  
     hospital = models.ForeignKey(
         Hospital,
@@ -16,6 +17,10 @@ class Person(models.Model):
         blank=True,
         null=True
     )
+    is_patient = models.BooleanField(default=False)
+    is_doctor = models.BooleanField(default=False)
+    is_nurse = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
     class Meta:
         permissions = (
                 ("signup", "Signup as a user"),
@@ -25,7 +30,7 @@ class Person(models.Model):
 def create_patient_profile(sender, instance, created, **kwargs):
     if created:
         Patient.objects.create(user=instance)
-    print(type(instance))
+        instance.person.is_patient = True
     instance.person.save()
 
 class PersonForm(ModelForm):

@@ -1,0 +1,8 @@
+{% extends 'users/base.html' %}
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    {{ patient_form.as_p }}
+    <button type="submit">Save changes</button>
+</form>
+{% endblock %}
