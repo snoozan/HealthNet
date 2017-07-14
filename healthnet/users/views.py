@@ -13,7 +13,7 @@ from .models.hospital import HospitalForm
 def home(request):
     if request.user.person.is_patient:
         if not request.user.person.patient.name:
-            redirect("users/update_patient")
+            return redirect("update_patient")
     if request.user.person.is_doctor:
         profile_form = DoctorForm(instance=request.user.person)
     elif request.user.person.is_nurse:
