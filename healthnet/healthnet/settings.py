@@ -29,6 +29,8 @@ ALLOWED_HOSTS = []
 
 LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = '/users/login'
+LOGOUT_REDIRECT_URL = '/users/login'
+
 
 # Application definition
 
@@ -76,6 +78,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'healthnet.wsgi.application'
 
+FIXTURE_DIRS = (
+        'users/fixtures/',
+    )
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases

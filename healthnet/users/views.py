@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.db import transaction
-from .models.person import PatientForm, SignupForm, DoctorForm, NurseForm, AdminForm
+from .models.person import PatientForm, SignupForm, DoctorForm, NurseForm, AdminForm, DoctorSignupForm, create_admin_user
 from .models.person import Person, Patient
 from .models.hospital import HospitalForm
 
@@ -33,7 +33,7 @@ def home(request):
 @transaction.atomic
 def update_profile(request):
     if request.method == 'POST':
-        patient_form = PatientForm(request.POST, instance=request.user.profile)
+        patient_form = PatientForm(request.POST, instance=request.user.person)
         if patient_form.is_valid():
             patient_form.save()
             messages.success(request, 'Your profile was successfully updated!')
@@ -64,6 +64,9 @@ def create_hospital(request):
         'hospital_form': hospital_form,
     })
 
+@transaction.atomic
+def create_admin(request):
+    create_admin_user()
 
 @transaction.atomic
 def signup_patient(request):
@@ -78,12 +81,11 @@ def signup_patient(request):
             user = authenticate(username=patient.username, password=raw_password)
             login(request, user)
             messages.success(request, 'You successfully signed up!')
+            print(user.has_perms('users.update_patient'))
             return redirect('home')
-        else:
-            messages.error(request, 'Please correct the error below.')
+        else: messages.error(request, 'Please correct the error below.')
     else:
         patient_form = SignupForm()
-
     return render(request, 'users/signup.html', {
         'patient_form': patient_form
     })
@@ -108,7 +110,7 @@ def update_nurse(request):
     })
 
 
-@permission_required('update')
+@permission_required('users.update')
 @login_required
 @transaction.atomic
 def update_doctor(request):
@@ -121,8 +123,8 @@ def update_doctor(request):
         else:
             messages.error(request, 'Please correct the error below.')
     else:
-        doctor_form = DoctorForm(instance=request.user.profile)
-    return render(request, 'profiles/profile.html', {
+        doctor_form = DoctorSignupForm()
+    return render(request, 'users/profile.html', {
         'doctor_form': doctor_form
     })
 
