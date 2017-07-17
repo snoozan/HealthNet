@@ -1,3 +1,25 @@
- [
- {"model": "auth.user", "pk": 3, "fields": {"password": "pbkdf2_sha256$36000$eGTuOiJ7CPyO$LR4AGwgi3KzslqE8ogIaIRMT0AHIAxN43ls/BYNwlbg=", "last_login": "2017-07-16T16:01:02.835Z", "is_superuser": false, "username": "test", "first_name": "", "last_name": "", "email": "", "is_staff": false, "is_active": true, "date_joined": "2017-07-16T16:01:02.474Z", "groups": [], "user_permissions": [76, 75]}}, {"model": "users.person", "pk": 3, "fields": {"name": "Susan", "user": 4, "hospital": 1, "is_patient": true, "is_doctor": false, "is_nurse": false, "is_admin": false}},
- {"model": "users.patient", "pk": 4, "fields": {"admitted": false}}]
+[
+{
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$sPr6g8qk2ghI$4WRKCYwkafGcJSnPWbfEq4ePEF8L9CkdTJEaF+s7dfM=",
+        "last_login": "2017-07-17T18:07:31.729Z",
+        "is_superuser": false,
+        "username": "adminUnique",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2017-07-17T18:03:28.060Z",
+        "groups": [],
+        "user_permissions": [
+            180,
+            182,
+            166,
+            165
+        ]
+    }
+}
+]
