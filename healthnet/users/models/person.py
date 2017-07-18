@@ -8,7 +8,12 @@ from django.forms import ModelForm, DateField
 import datetime
 from .hospital import Hospital
 
+class PersonManager(models.Manager):
+    def get_by_natural_key(self, name, last_name):
+        return self.get(name=name)
+
 class Person(models.Model):
+    objects = PersonManager()
     name = models.CharField(max_length=100, default="")
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     hospital = models.ForeignKey(
@@ -113,30 +118,6 @@ class Admin(Person):
                 ("update_patient", "Signup as a user"),
                 ("update", "Signup as a user"),
         )
-
-def create_admin_user():
-    admin = User.objects.create_user(username="adminUnique", password="test1234")
-    admin.save()
-    Person.objects.create(user=admin)
-    admin.person.is_admin = True
-    content_type = ContentType.objects.get_for_model(Patient)
-    permission = Permission.objects.get(
-        codename='update_patient',
-        content_type=content_type,
-    )
-    admin.user_permissions.add(permission)
-    content_type = ContentType.objects.get_for_model(Admin)
-    permission = Permission.objects.get(
-        codename='update',
-        content_type=content_type,
-    )
-    admin.user_permissions.add(permission)
-    permission = Permission.objects.get(
-        codename='transfer',
-        content_type=content_type,
-    )
-    admin.user_permissions.add(permission)
-    admin.person.save()
 
 class AdminForm(ModelForm):
     class Meta:

@@ -10,7 +10,6 @@ urlpatterns = [
     url(r'^logout/$', auth_views.logout, name='logout'),
     url(r'^update/$', views.update_profile, name='update_patient'),
     url(r'^create_hospital/$', views.create_hospital, name='create_hospital'),
-    url(r'^create_admin/$', views.create_admin, name='create_admin'),
     url(r'^signup/$', views.signup_patient, name='signup'),
     url(r'^update_nurse/$', views.update_nurse, name='update_nurse'),
     url(r'^update_doctor/$', views.update_doctor, name='update_doctor'),
