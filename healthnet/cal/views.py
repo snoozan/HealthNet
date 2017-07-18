@@ -6,6 +6,22 @@ from .models import AppointmentForm
 
 @login_required
 @transaction.atomic
+def show_calendar(request):
+    if request.user.person.is_patient:
+        #All patient's appointments
+        appointments = None
+    elif request.user.person.is_doctor:
+        #All doctor's appointments
+        appointments = None
+    elif request.user.person.is_nurse:
+        #All appointments for the day at hospital
+        appointments = None
+    else:
+        appointment = []
+    return render(request, 'cal/calendar.html', {'appointments':appointments})
+
+@login_required
+@transaction.atomic
 def create_appointment(request):
     if request.method == 'POST':
         if request.user.person.is_patient:
@@ -15,4 +31,14 @@ def create_appointment(request):
     else:
         appointment_form = AppointmentForm
 
+    return render(request, 'cal/appointments.html', {'appointment_form':appointment_form})
+
+@login_required
+@transaction.atomic
+def delete_appointment(request):
+    return render(request, 'cal/appointments.html', {'appointment_form':appointment_form})#show_calendar
+
+@login_required
+@transaction.atomic
+def edit_appointment(request):
     return render(request, 'cal/appointments.html', {'appointment_form':appointment_form})

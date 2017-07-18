@@ -21,5 +21,5 @@ urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^users/', include('users.urls')),
     url(r'^admin/', admin.site.urls),
-    url(r'^create_appointment/', include('cal.urls'))
+    url(r'^cal/', include('cal.urls'))
 ]
