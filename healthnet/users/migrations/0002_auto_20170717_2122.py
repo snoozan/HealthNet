@@ -26,6 +26,17 @@ def create_admin(apps, schema_editor):
         content_type=content_type,
     )
     admin.user.user_permissions.add(permission.id)
+    content_type = ContentType.objects.get_for_model(apps.get_model('users', 'Admin'))
+    permission = Permission.objects.get(
+        codename='update',
+        content_type=content_type,
+    )
+    admin.user.user_permissions.add(permission.id)
+    permission = Permission.objects.get(
+        codename='transfer',
+        content_type=content_type,
+    )
+    admin.user.user_permissions.add(permission.id)
 
 def delete_admin(apps, schema_editor):
     db_alias = schema_editor.connection.alias
