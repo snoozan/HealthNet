@@ -187,5 +187,4 @@ def transfer_patient(request):
         messages.error(request, 'Incorrectly formatted request.')
 
     return render(request, 'users/profile.html', {
-        'patient_form' : patient_form
     })
