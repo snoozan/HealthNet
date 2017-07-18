@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.db import transaction
-from .models.person import PatientForm, SignupForm, DoctorForm, NurseForm, AdminForm, DoctorSignupForm, create_admin_user
+from .models.person import PatientForm, SignupForm, DoctorForm, NurseForm, AdminForm, DoctorSignupForm
 from .models.person import Person, Patient
 from .models.hospital import HospitalForm
 
@@ -64,9 +64,6 @@ def create_hospital(request):
         'hospital_form': hospital_form,
     })
 
-@transaction.atomic
-def create_admin(request):
-    create_admin_user()
 
 @transaction.atomic
 def signup_patient(request):

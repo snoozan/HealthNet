@@ -119,28 +119,6 @@ class Admin(Person):
                 ("update", "Signup as a user"),
         )
 
-def create_admin_user():
-    admin = User.objects.get(pk="3")
-    admin.is_admin = True
-    content_type = ContentType.objects.get_for_model(Patient)
-    permission = Permission.objects.get(
-        codename='update_patient',
-        content_type=content_type,
-    )
-    admin.user_permissions.add(permission)
-    content_type = ContentType.objects.get_for_model(Admin)
-    permission = Permission.objects.get(
-        codename='update',
-        content_type=content_type,
-    )
-    admin.user_permissions.add(permission)
-    permission = Permission.objects.get(
-        codename='transfer',
-        content_type=content_type,
-    )
-    admin.user_permissions.add(permission)
-    admin.person.save()
-
 class AdminForm(ModelForm):
     class Meta:
         model = Admin 
