@@ -1,0 +1,7 @@
+{% extends 'users/base.html' %}
+{% block content %}
+<form method="post">
+  {% csrf_token %}
+  {{ appointment_form.as_p }}
+  <button type="submit">Save changes</button>
+{% endblock %}

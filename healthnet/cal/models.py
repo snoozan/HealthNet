@@ -1,3 +1,14 @@
 from django.db import models
+from django.forms import ModelForm, DateTimeField
+from users.models import Patient, Doctor
 
-# Create your models here.
+class Appointment(models.Model):
+    description = models.CharField(max_length=1000)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    time = DateTimeField()
+
+class AppointmentForm(ModelForm):
+    class Meta:
+        model = Appointment
+        fields = '__all__'

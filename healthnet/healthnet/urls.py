@@ -15,10 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from users import views 
+from users import views
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^users/', include('users.urls')),
     url(r'^admin/', admin.site.urls),
+    url(r'^create_appointment/', include('cal.urls'))
 ]
