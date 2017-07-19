@@ -1,6 +1,13 @@
 {% extends 'users/base.html' %}
 {% block content %}
-  {% csrf_token %}
-    <a href="{% url 'create' %}">create_appointment</a><br/>
-  {{ appointments }}
+{% csrf_token %}
+<a href="{% url 'create' %}">create_appointment</a><br/>
+<h3>
+    <u>Appointments</u>
+</h3>
+<ul style="list-style-type:none">
+    {% for a in appointments %}
+    <li><a href="{% url 'create' %}">{{ a.description }} with {{ a.doctor.name}} on {{ a.time|date:"M d, Y"}} at {{a.time|time}}</a></li><br/>
+    {% endfor %}
+</ul>
 {% endblock %}
