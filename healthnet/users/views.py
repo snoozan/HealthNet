@@ -270,6 +270,7 @@ def transfer_patient(request, pk):
         if(patient_form.is_valid()):
             patient_form.save()
             messages.success(request, 'Patient was transferred successfully!')
+            hospitals = Hospital.objects.exclude(pk=Patient.objects.get(pk=pk).hospital_id)
         else:
             messages.error(request, 'Incorrectly formatted request.')
 
