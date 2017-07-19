@@ -3,9 +3,9 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.db import transaction
-from .models.person import PatientForm, SignupForm, DoctorForm, NurseForm, AdminForm, DoctorSignupForm
-from .models.person import Person, Patient
-from .models.hospital import HospitalForm
+
+from .models.person import PatientForm, SignupForm, DoctorForm, NurseForm, AdminForm, Admin, Nurse
+from .models.person import Patient, Doctor, Person
 
 
 # Create your views here.
@@ -24,7 +24,7 @@ def home(request):
         profile_form = PatientForm(instance=request.user.person)
 
     return render(request, 'users/home.html', {
-        'profile_form': profile_form
+        'profile_form': profile_form,
     })
 
 
@@ -47,24 +47,6 @@ def update_profile(request):
     })
 
 
-@login_required
-@transaction.atomic
-def create_hospital(request):
-    if request.method == 'POST':
-        hospital_form = HospitalForm(request.POST)
-        if hospital_form.is_valid():
-            hospital_form.save()
-            messages.success(request, "Hospital successfully created!")
-            return redirect('signup')
-        else:
-            messages.error(request, 'Please correct the error below.')
-    else:
-        hospital_form = HospitalForm
-    return render(request, 'users/hospital.html', {
-        'hospital_form': hospital_form,
-    })
-
-
 @transaction.atomic
 def signup_patient(request):
     if request.method == 'POST':
@@ -72,7 +54,6 @@ def signup_patient(request):
         if patient_form.is_valid():
             patient = patient_form.save()
             patient.refresh_from_db()
-            patient.person.birth_date = patient_form.cleaned_data.get('dob')
             patient.save()
             raw_password = patient_form.cleaned_data.get('password1')
             user = authenticate(username=patient.username, password=raw_password)
@@ -87,61 +68,154 @@ def signup_patient(request):
         'patient_form': patient_form
     })
 
+@permission_required('users.update')
+@login_required
+def update(request):
+   nurses = Nurse.objects.get(hospital=request.user.person.hospital_id)
+   doctors = Doctor.objects.get(hospital=request.user.person.hospital_id)
+   return render(request, 'users/update.html', {
+       'nurses' : nurses,
+       'doctors': doctors,
+   })
+
 
 @permission_required('users.update')
 @login_required
 @transaction.atomic
 def update_nurse(request):
     if request.method == 'POST':
-        nurse_form = NurseForm(request.POST, instance=request.user.profile)
+        nurse_form = NurseForm(request.POST, instance=Nurse.objects.get(pk=request.nurse_id))
         if nurse_form.is_valid():
             nurse_form.save()
             messages.success(request, 'Your profile was successfully updated!')
-            return redirect('settings:profile')
+            return redirect('home')
         else:
             messages.error(request, 'Please correct the error below.')
     else:
-        nurse_form = NurseForm(instance=request.user.profile)
-    return render(request, 'profiles/profile.html', {
-        'nurse_form': nurse_form
+        nurse_form = NurseForm(request.nurse_id)
+    return render(request, 'users/profile.html', {
+        'nurse_form': nurse_form,
     })
-
 
 @permission_required('users.update')
 @login_required
 @transaction.atomic
 def update_doctor(request):
     if request.method == 'POST':
-        doctor_form = DoctorForm(request.POST, instance=request.user.profile)
+        doctor_form = DoctorForm(request.POST, instance=Doctor.objects.get(pk=request.doctor_id))
         if doctor_form.is_valid():
             doctor_form.save()
             messages.success(request, 'Your profile was successfully updated!')
-            return redirect('settings:profile')
+            return redirect('home')
         else:
             messages.error(request, 'Please correct the error below.')
     else:
-        doctor_form = DoctorSignupForm()
+        doctor_form = DoctorForm(request.doctor_id)
     return render(request, 'users/profile.html', {
-        'doctor_form': doctor_form
+        'doctor_form': doctor_form,
     })
 
 
-@permission_required('update')
+@permission_required('users.update')
 @login_required
 @transaction.atomic
 def update_admin(request):
     if request.method == 'POST':
-        admin_form = AdminForm(request.POST, instance=request.user.profile)
+        admin_form = AdminForm(request.POST, instance=Admin.objects.get(pk=request.admin_id))
         if admin_form.is_valid():
             admin_form.save()
             messages.success(request, 'Your profile was successfully updated!')
-            return redirect('settings:profile')
+            return redirect('home')
         else:
             messages.error(request, 'Please correct the error below.')
     else:
-        admin_form = AdminForm(instance=request.user.profile)
-    return render(request, 'profiles/profile.html', {
-        'admin_form': admin_form
+        admin_form = AdminForm(request.admin_id)
+    return render(request, 'users/profile.html', {
+        'admin_form': admin_form,
+    })
+
+
+@permission_required('users.update')
+@login_required
+@transaction.atomic
+def create_nurse(request):
+    if request.method == 'POST':
+        nurse_form = NurseForm(request.POST)
+        account_form = SignupForm(request.POST)
+        if account_form.is_valid() and nurse_form.is_valid():
+            user = account_form.save()
+            Person.objects.get(pk=user.person.id).delete()
+            nurse = Nurse.objects.create(user=user)
+            nurse.name = nurse_form.cleaned_data.get('name')
+            nurse.hospital = request.user.person.hospital_id
+            nurse.title = nurse_form.cleaned_data.get('title')
+            nurse.is_nurse = True
+            nurse.save()
+            messages.success(request, 'Your profile was successfully updated!')
+            return redirect('users/profile')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        nurse_form = NurseForm()
+        account_form = SignupForm()
+    return render(request, 'users/profile.html', {
+        'nurse_form': nurse_form,
+        'account_form': account_form
+    })
+
+
+@permission_required('users.update')
+@login_required
+@transaction.atomic
+def create_doctor(request):
+    if request.method == 'POST':
+        doctor_form = DoctorForm(request.POST)
+        account_form = SignupForm(request.POST)
+        if account_form.is_valid() and doctor_form.is_valid():
+            user = account_form.save()
+            Person.objects.get(pk=user.person.id).delete()
+            doctor = Doctor.objects.create(user=user)
+            doctor.name = doctor_form.cleaned_data.get('name')
+            doctor.specialty_field = doctor_form.cleaned_data.get('specialty_field')
+            doctor.hospital = request.user.person.hospital_id
+            doctor.is_doctor = True
+            doctor.save()
+            messages.success(request, 'Your profile was successfully updated!')
+            return redirect('users/profile')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        doctor_form = DoctorForm()
+        account_form = SignupForm()
+    return render(request, 'users/profile.html', {
+        'doctor_form': doctor_form,
+        'account_form': account_form
+    })
+
+
+@permission_required('users.update')
+@login_required
+@transaction.atomic
+def create_admin(request):
+    if request.method == 'POST':
+        admin_form = DoctorForm(request.POST)
+        account_form = SignupForm(request.POST)
+        if account_form.is_valid() and admin_form.is_valid():
+            user = account_form.save()
+            Person.objects.get(pk=user.person.id).delete()
+            admin = Admin.objects.create(user=user)
+            admin.is_admin = True
+            admin.save()
+            messages.success(request, 'Your profile was successfully updated!')
+            return redirect('home')
+        else:
+            messages.error(request, 'Please correct the error below.')
+    else:
+        admin_form = AdminForm()
+        account_form = SignupForm()
+    return render(request, 'users/profile.html', {
+        'doctor_form': admin_form,
+        'account_form': account_form
     })
 
 

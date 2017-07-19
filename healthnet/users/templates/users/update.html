@@ -1,0 +1,25 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+    {% csrf_token %}
+    <table>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+      </tr>
+
+   {% for nurse in nurses %}
+       <tr>
+           <td>Nurse</td>
+           <td>nurse.name</td>
+       </tr>
+   {%  endfor %}
+   {% for doctor in doctors %}
+       <tr>
+           <td>Doctor</td>
+           <td>doctor.name</td>
+       </tr>
+   {%  endfor %}
+</table>
+
+{% endblock %}
