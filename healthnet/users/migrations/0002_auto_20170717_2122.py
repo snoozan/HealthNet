@@ -70,7 +70,7 @@ def create_admin(apps, schema_editor):
                                          hospital=hospital)
     doctor = Doctor.objects.using(db_alias).get(user_id=user.id)
 
-    Nurse = apps.get_model('users', 'Doctor')
+    Nurse = apps.get_model('users', 'Nurse')
     user = User.objects.using(db_alias).get(username="nurse")
     Nurse.objects.using(db_alias).create(name="John Doe", is_admin=True,
                                           user_id=user.id,
