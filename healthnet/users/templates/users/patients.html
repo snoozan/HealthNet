@@ -2,15 +2,19 @@
 
 {% block content %}
 {% csrf_token %}
-    </tr>
 
     {% if patients %}
-    {% for patient in patients %}
         <table>
-        <tr>
-            <th>Name</th>
-        <tr>
-            <td><a href="{% url 'transfer' pk=patient.id %}">{{ patient.name  }}</a></td>
+            <tr>
+                <th>Name</th>
+            <tr>
+    {% for patient in patients %}
+            {% if transfer %}
+                <td><a href="{% url 'transfer' pk=patient.id %}">{{ patient.name  }}</a></td>
+            {% else %}
+                <td><a href="{% url 'home' %}">{{ patient.name  }}</a></td>
+            {%  endif %}
+
         </tr>
         </table>
     {%  endfor %}

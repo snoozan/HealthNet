@@ -221,19 +221,35 @@ def create_admin(request):
     })
 
 
-@permission_required('admit')
+@permission_required('users.admit')
 @login_required
 @transaction.atomic
 def admit_patient(request):
     if request.method == 'POST':
-        patient = Patient.objects.get(pk=request.patientid)
+        patient = Patient.objects.get(pk=request.POST.get('id'))
         patient.admitted = True
         patient.save()
         messages.success(request, 'Patient was successfully admitted!')
-    else:
-        messages.error(request, 'Incorrectly formatted request.')
 
-    return render(request, 'profiles/profile.html')
+    patients = Patient.objects.filter(hospital=request.user.person.hospital_id, admitted=False)
+
+    return render(request, 'users/admit.html', {
+        'patients': patients,
+    })
+
+@permission_required('users.admit')
+@login_required
+@transaction.atomic
+def view_patients(request):
+    if(request.user.person.is_nurse):
+        patients = Patient.objects.filter(hospital=request.user.person.hospital_id)
+    else:
+        patients = Patient.objects.all()
+
+    return render(request, 'users/patients.html', {
+        'patients': patients,
+    })
+
 
 
 @permission_required('users.release')
@@ -253,11 +269,12 @@ def release_patient(request):
 @login_required
 @transaction.atomic
 def transfer_view(request):
-    patients = Patient.objects.filter(hospital=request.user.person.hospital_id)
+    if(request.user.person.is_admin):
+        patients = Patient.objects.filter(hospital=request.user.person.hospital_id)
     return render(request, 'users/patients.html', {
-        'patients': patients
+        'patients': patients,
+        'transfer': True
     })
-
 
 
 @permission_required('users.transfer')
@@ -268,6 +285,7 @@ def transfer_patient(request, pk):
         patient = Patient.objects.get(pk=pk)
         patient_form = PatientForm(request.POST, instance=patient)
         if(patient_form.is_valid()):
+            patient.admitted = False
             patient_form.save()
             messages.success(request, 'Patient was transferred successfully!')
             hospitals = Hospital.objects.exclude(pk=Patient.objects.get(pk=pk).hospital_id)
@@ -275,7 +293,10 @@ def transfer_patient(request, pk):
             messages.error(request, 'Incorrectly formatted request.')
 
     else:
-        hospitals = Hospital.objects.exclude(pk=Patient.objects.get(pk=pk).hospital_id)
+        if(request.user.person.is_admin):
+            hospitals = Hospital.objects.exclude(pk=Patient.objects.get(pk=pk).hospital_id)
+        else:
+            hospitals = Hospital.objects.get(pk=request.user.person.hospital_id)
         patient = Patient.objects.get(pk=pk)
     return render(request, 'users/transfer.html', {
         'hospitals': hospitals,

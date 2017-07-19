@@ -84,7 +84,6 @@ class Nurse(Person):
     class Meta:
         permissions = (
                 ("admit", "Admit patient"),
-                ("release", "Release patient"),
         )
 
 class NurseForm(ModelForm):

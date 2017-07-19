@@ -1,0 +1,25 @@
+{% extends 'users/base.html' %}
+{% block content %}
+    {% if patients %}
+        {% for patient in patients %}
+            <table>
+                <tr>
+                    <th>Name</th>
+                </tr>
+                <tr>
+                <form method="post">
+                    {% csrf_token %}
+                    <select name="hospital" id="id_hospital" hidden>
+                            <option value={{ patient.hospital.id }}>{{ patient.hospital.name }}</option>
+                    </select>
+    <td><input type="text" name="name" value="{{ patient.name }}" id="id_name" required="" maxlength="100"></td>
+                    <td><input type="text" name="id" value="{{ patient.id }}" id="id_person" required="" maxlength="100" hidden></td>
+    <td><button type="submit">Admit</button></td>
+                </form>
+                </tr>
+            </table>
+        {%  endfor %}
+    {%  else %}
+        No patients to admit to {{ request.user.person.hospital.name }}
+    {%  endif %}
+{% endblock %}

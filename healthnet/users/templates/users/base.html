@@ -36,6 +36,11 @@
         <a href="{% url 'create_nurse' %}">Create Nurse</a>
         <a href="{% url 'create_admin' %}">Create Admin</a>
     {% endif %}
+    {% if user.person.is_doctor %}
+        <a href="{% url 'admit_patient' %}">Admit Patients</a>
+        <a href="{% url 'view_patients' %}">View Patients</a>
+    {% endif %}
+
       <hr>
     </header>
     <main>
