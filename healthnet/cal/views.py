@@ -2,14 +2,16 @@ from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
-from .models import AppointmentForm
+from .models import AppointmentForm, Appointment
+from users.models import Person
 
 @login_required
 @transaction.atomic
 def show_calendar(request):
     if request.user.person.is_patient:
-        #All patient's appointments
+        #appointments = Appointment.objects.get()
         appointments = None
+        print(str(appointments)+'showing patient appointments')
     elif request.user.person.is_doctor:
         #All doctor's appointments
         appointments = None

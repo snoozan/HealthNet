@@ -1,0 +1,6 @@
+{% extends 'users/base.html' %}
+{% block content %}
+  {% csrf_token %}
+    <a href="{% url 'create' %}">create_appointment</a><br/>
+  {{ appointments }}
+{% endblock %}
