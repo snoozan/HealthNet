@@ -70,20 +70,14 @@ class Patient(Person):
 class PatientForm(ModelForm):
     class Meta:
         model = Patient
-        fields = '__all__'
+        fields = ('name', 'hospital')
 
 class SignupForm(UserCreationForm):
-    birth_date = DateField(help_text='Required. Format: YYYY-MM-DD')
 
     class Meta:
         model = User 
-        fields = ('username', 'birth_date', 'password1', 'password2', )
-
-class DoctorSignupForm(UserCreationForm):
-
-    class Meta:
-        model = User
         fields = ('username', 'password1', 'password2', )
+
 
 class Nurse(Person):
     title = models.CharField(max_length=100, blank=True)
@@ -96,7 +90,7 @@ class Nurse(Person):
 class NurseForm(ModelForm):
     class Meta:
         model = Nurse
-        fields = '__all__'
+        fields = ('hospital', 'title', 'name')
 
 class Doctor(Person):
     specialty_field = models.CharField(max_length=100, blank=True)
@@ -109,7 +103,7 @@ class Doctor(Person):
 class DoctorForm(ModelForm):
     class Meta:
         model = Doctor
-        fields = '__all__'
+        fields = ('specialty_field', 'hospital', 'name')
 
 class Admin(Person):
     class Meta:
@@ -122,4 +116,4 @@ class Admin(Person):
 class AdminForm(ModelForm):
     class Meta:
         model = Admin 
-        fields = '__all__'
+        fields = ('hospital', 'name')
