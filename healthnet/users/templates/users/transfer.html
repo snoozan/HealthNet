@@ -1,10 +1,16 @@
 {% extends 'users/base.html' %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
 
-</body>
-</html>
+{% block content %}
+    <h3>{{ patient.name }} currently in {{ patient.hospital.name }}</h3>
+    <form method="post">
+    {% csrf_token %}
+    Transfer to: <br>
+    <select>
+        {% for hospital in hospitals %}
+      <option value={{ hospital }}>{{ hospital.name }}</option>
+        {%  endfor %}
+    </select>
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}
+

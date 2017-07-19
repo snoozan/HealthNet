@@ -29,6 +29,13 @@
       {% else %}
         <a href="{% url 'login' %}">login</a> / <a href="{% url 'signup' %}">signup</a>
       {% endif %}
+    {% if user.person.is_admin %}
+        <a href="{% url 'transfer_patients' %}">Transfer Patients</a>
+        <a href="{% url 'update' %}">Update Employees</a>
+        <a href="{% url 'create_doctor' %}">Create Doctor</a>
+        <a href="{% url 'create_nurse' %}">Create Nurse</a>
+        <a href="{% url 'create_admin' %}">Create Admin</a>
+    {% endif %}
       <hr>
     </header>
     <main>

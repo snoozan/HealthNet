@@ -65,14 +65,14 @@ def create_admin(apps, schema_editor):
 
     Doctor = apps.get_model('users', 'Doctor')
     user = User.objects.using(db_alias).get(username="doctor")
-    Doctor.objects.using(db_alias).create(name="John Smith", is_admin=True,
+    Doctor.objects.using(db_alias).create(name="John Smith", is_doctor=True,
                                          user_id=user.id,
                                          hospital=hospital)
     doctor = Doctor.objects.using(db_alias).get(user_id=user.id)
 
     Nurse = apps.get_model('users', 'Nurse')
     user = User.objects.using(db_alias).get(username="nurse")
-    Nurse.objects.using(db_alias).create(name="John Doe", is_admin=True,
+    Nurse.objects.using(db_alias).create(name="John Doe", is_nurse=True,
                                           user_id=user.id,
                                           hospital=hospital)
     nurse = Nurse.objects.using(db_alias).get(user_id=user.id)

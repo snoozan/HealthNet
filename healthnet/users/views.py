@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.db import transaction
 
+from users.models import Hospital
 from .models.person import PatientForm, SignupForm, DoctorForm, NurseForm, AdminForm, Admin, Nurse
 from .models.person import Patient, Doctor, Person
 
@@ -59,7 +60,6 @@ def signup_patient(request):
             user = authenticate(username=patient.username, password=raw_password)
             login(request, user)
             messages.success(request, 'You successfully signed up!')
-            print(user.has_perms('users.update_patient'))
             return redirect('home')
         else: messages.error(request, 'Please correct the error below.')
     else:
@@ -71,20 +71,22 @@ def signup_patient(request):
 @permission_required('users.update')
 @login_required
 def update(request):
-   nurses = Nurse.objects.get(hospital=request.user.person.hospital_id)
-   doctors = Doctor.objects.get(hospital=request.user.person.hospital_id)
+   nurses = Nurse.objects.filter(hospital=request.user.person.hospital_id)
+   doctors = Doctor.objects.filter(hospital=request.user.person.hospital_id)
+   admins = Admin.objects.filter(hospital=request.user.person.hospital_id)
    return render(request, 'users/update.html', {
        'nurses' : nurses,
        'doctors': doctors,
+       'admins': admins,
    })
 
 
 @permission_required('users.update')
 @login_required
 @transaction.atomic
-def update_nurse(request):
+def update_nurse(request, pk):
     if request.method == 'POST':
-        nurse_form = NurseForm(request.POST, instance=Nurse.objects.get(pk=request.nurse_id))
+        nurse_form = NurseForm(request.POST, instance=Nurse.objects.get(pk=pk))
         if nurse_form.is_valid():
             nurse_form.save()
             messages.success(request, 'Your profile was successfully updated!')
@@ -92,7 +94,7 @@ def update_nurse(request):
         else:
             messages.error(request, 'Please correct the error below.')
     else:
-        nurse_form = NurseForm(request.nurse_id)
+        nurse_form = NurseForm(instance=Nurse.objects.get(pk=pk))
     return render(request, 'users/profile.html', {
         'nurse_form': nurse_form,
     })
@@ -100,9 +102,9 @@ def update_nurse(request):
 @permission_required('users.update')
 @login_required
 @transaction.atomic
-def update_doctor(request):
+def update_doctor(request, pk):
     if request.method == 'POST':
-        doctor_form = DoctorForm(request.POST, instance=Doctor.objects.get(pk=request.doctor_id))
+        doctor_form = DoctorForm(request.POST, instance=Doctor.objects.get(pk=pk))
         if doctor_form.is_valid():
             doctor_form.save()
             messages.success(request, 'Your profile was successfully updated!')
@@ -110,7 +112,7 @@ def update_doctor(request):
         else:
             messages.error(request, 'Please correct the error below.')
     else:
-        doctor_form = DoctorForm(request.doctor_id)
+        doctor_form = DoctorForm(instance=Doctor.objects.get(pk=pk))
     return render(request, 'users/profile.html', {
         'doctor_form': doctor_form,
     })
@@ -119,9 +121,9 @@ def update_doctor(request):
 @permission_required('users.update')
 @login_required
 @transaction.atomic
-def update_admin(request):
+def update_admin(request, pk):
     if request.method == 'POST':
-        admin_form = AdminForm(request.POST, instance=Admin.objects.get(pk=request.admin_id))
+        admin_form = AdminForm(request.POST, instance=Admin.objects.get(pk=pk))
         if admin_form.is_valid():
             admin_form.save()
             messages.success(request, 'Your profile was successfully updated!')
@@ -129,7 +131,7 @@ def update_admin(request):
         else:
             messages.error(request, 'Please correct the error below.')
     else:
-        admin_form = AdminForm(request.admin_id)
+        admin_form = AdminForm(instance=Admin.objects.get(pk=pk))
     return render(request, 'users/profile.html', {
         'admin_form': admin_form,
     })
@@ -247,18 +249,34 @@ def release_patient(request):
 
     return render(request, 'users/profile.html')
 
+@permission_required('users.transfer')
+@login_required
+@transaction.atomic
+def transfer_view(request):
+    patients = Patient.objects.filter(hospital=request.user.person.hospital_id)
+    return render(request, 'users/patients.html', {
+        'patients': patients
+    })
+
+
 
 @permission_required('users.transfer')
 @login_required
 @transaction.atomic
-def transfer_patient(request):
+def transfer_patient(request, pk):
     if request.method == 'POST':
-        patient = Patient.objects.get(pk=request.patientid)
-        patient.hospital = request.hospital
-        patient.save()
-        messages.success(request, 'Patient was transferred successfully!')
-    else:
-        messages.error(request, 'Incorrectly formatted request.')
+        patient = Patient.objects.get(pk=pk)
+        patient_form = PatientForm(request.POST, instance=patient)
+        if(patient_form.is_valid()):
+            patient_form.save()
+            messages.success(request, 'Patient was transferred successfully!')
+        else:
+            messages.error(request, 'Incorrectly formatted request.')
 
-    return render(request, 'users/profile.html', {
+    else:
+        hospitals = Hospital.objects.exclude(pk=Patient.objects.get(pk=pk).hospital_id)
+        patient = Patient.objects.get(pk=pk)
+    return render(request, 'users/transfer.html', {
+        'hospitals': hospitals,
+        'patient': patient,
     })
