@@ -5,6 +5,29 @@ from __future__ import unicode_literals
 from django.db import migrations
 from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.management import create_permissions
+
+def migrate_permissions(apps, schema_editor):
+    for app_config in apps.get_app_configs():
+        app_config.models_module = True
+        create_permissions(app_config, apps=apps, verbosity=0)
+        app_config.models_module = None
+
+def create_user(apps, schema_editor):
+    db_alias = schema_editor.connection.alias
+    User = apps.get_model('auth','User')
+    User.objects.using(db_alias).create(username="adminUnique", password="pbkdf2_sha256$36000$sPr6g8qk2ghI$4WRKCYwkafGcJSnPWbfEq4ePEF8L9CkdTJEaF+s7dfM=")
+    Hospital = apps.get_model('users','Hospital')
+    Hospital.objects.using(db_alias).create(name="Strong Memorial Hospital", address="Somewhere in Rochester")
+    Hospital.objects.using(db_alias).create(name="UoR Hospital", address="Somewhere in Rochester")
+
+def delete_user(apps, schema_editor):
+    db_alias = schema_editor.connection.alias
+    Hospital = apps.get_model('users','Hospital')
+    Hospital.objects.using(db_alias).get(name="UoR").delete()
+    Hospital.objects.using(db_alias).get(name="Strong Memorial Hospital").delete()
+    User = apps.get_model('auth','User')
+    User.objects.using(db_alias).get(username="adminUnique").delete()
 
 def create_admin(apps, schema_editor):
     db_alias = schema_editor.connection.alias
@@ -12,10 +35,10 @@ def create_admin(apps, schema_editor):
     Person.objects.using(db_alias).all().delete()
 
     Hospital = apps.get_model('users', 'Hospital')
-    hospital = Hospital.objects.using(db_alias).get(pk=1)
+    hospital = Hospital.objects.using(db_alias).get(name="UoR Hospital")
 
     Admin = apps.get_model('users', 'Admin')
-    user = User.objects.using(db_alias).get(pk=3)
+    user = User.objects.using(db_alias).get(username="adminUnique")
     Admin.objects.using(db_alias).create(name="Jane Doe", is_admin=True,
                                          user_id=user.id,
                                          hospital=hospital)
@@ -26,13 +49,23 @@ def create_admin(apps, schema_editor):
         content_type=content_type,
     )
     admin.user.user_permissions.add(permission.id)
+    content_type = ContentType.objects.get_for_model(apps.get_model('users', 'Admin'))
+    permission = Permission.objects.get(
+        codename='update',
+        content_type=content_type,
+    )
+    admin.user.user_permissions.add(permission.id)
+    permission = Permission.objects.get(
+        codename='transfer',
+        content_type=content_type,
+    )
+    admin.user.user_permissions.add(permission.id)
 
 def delete_admin(apps, schema_editor):
     db_alias = schema_editor.connection.alias
 
     Admin = apps.get_model('users', 'Admin')
     Admin.objects.using(db_alias).get(name="Jane Doe").delete()
-    User.objects.using(db_alias).get(pk=3).delete()
 
 
 class Migration(migrations.Migration):
@@ -42,5 +75,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunPython(migrate_permissions),
+        migrations.RunPython(create_user,  delete_user),
         migrations.RunPython(create_admin, delete_admin),
     ]

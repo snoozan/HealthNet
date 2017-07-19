@@ -10,25 +10,6 @@ from django.contrib.auth.models import User, Permission
 
 from users.models import Person, Hospital, Admin
 
-def create_admin(apps, schema_editor):
-    db_alias = schema_editor.connection.alias
-    Person.objects.using(db_alias).all().delete()
-    user = User.objects.using(db_alias).get(pk=3)
-    hospital = Hospital.objects.using(db_alias).get(pk=1)
-    Admin.objects.create(name="Jane Doe", is_admin=True, user=user, hospital=hospital)
-    admin = Admin.objects.using(db_alias).get(name="Jane Doe")
-    content_type = ContentType.objects.get_for_model(apps.get_model('users', 'Patient'))
-    permission = Permission.objects.get(
-        codename='update_patient',
-        content_type=content_type,
-    )
-    admin.user_permissions.add(permission)
-
-def delete_admin(apps, schema_editor):
-    db_alias = schema_editor.connection.alias
-    Admin.objects.using(db_alias).get(name="Jane Doe").delete()
-    User.objects.using(db_alias).get(pk=3).delete()
-
 class Migration(migrations.Migration):
 
     initial = True
@@ -113,5 +94,4 @@ class Migration(migrations.Migration):
             name='user',
             field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
         ),
-        migrations.RunPython(create_admin, delete_admin),
     ]
