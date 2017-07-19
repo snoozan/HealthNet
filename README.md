@@ -2,5 +2,5 @@
 
 ## Migration directions
 ```
-source resetDB.sh
+python manage.py migrate
 ```
