@@ -31,6 +31,9 @@ class Person(models.Model):
                 ("signup", "Signup as a user"),
         )
 
+    def __str__(self):
+        return self.name
+
 @receiver(post_save, sender=User)
 def create_patient_profile(sender, instance, created, **kwargs):
     if created:
@@ -75,7 +78,7 @@ class PatientForm(ModelForm):
 class SignupForm(UserCreationForm):
 
     class Meta:
-        model = User 
+        model = User
         fields = ('username', 'password1', 'password2', )
 
 
@@ -115,5 +118,5 @@ class Admin(Person):
 
 class AdminForm(ModelForm):
     class Meta:
-        model = Admin 
+        model = Admin
         fields = ('hospital', 'name')
