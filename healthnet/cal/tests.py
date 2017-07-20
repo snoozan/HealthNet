@@ -23,7 +23,7 @@ class CalTests(TestCase):
         self.assertEqual(Appointment.objects.get(description='Hello'), a)
 
     def test_appointment_permissions(self):
-        p = Patient.objects.create(name='Logan', user=self.user)
+        p = Patient.objects.create(name='Logan', user=self.user, is_patient=True)
         self.client.login(username='Roger', password='alkdfjad;lfkjadfklj')
         request = self.factory.get('/cal/create/')
         request.user = self.user
