@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, permission_required
@@ -19,6 +20,18 @@ def show_calendar(request):
         appointments = Appointment.objects.all()
     else:
         appointments = None
+    return render(request, 'cal/calendar.html', {'appointments':appointments})
+
+@login_required
+@transaction.atomic
+def view_calendar(request, pk):
+    if request.user.person.is_doctor:
+        appointments = Appointment.objects.filter(pk=pk)
+    else:
+        now = datetime.datetime.now()
+        two_weeks = now + datetime.timedelta(weeks=2)
+
+        appointments = Appointment.objects.filter(pk, time__range=(now, two_weeks))
     return render(request, 'cal/calendar.html', {'appointments':appointments})
 
 @login_required
