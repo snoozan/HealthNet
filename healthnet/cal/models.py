@@ -13,4 +13,4 @@ class AppointmentForm(ModelForm):
     time = DateTimeField()
     class Meta:
         model = Appointment
-        fields = '__all__'
+        fields = ('description', 'patient', 'doctor','time')

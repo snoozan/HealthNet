@@ -7,7 +7,7 @@
 </h3>
 <ul style="list-style-type:none">
     {% for a in appointments %}
-    <li><a href="{% url 'create' %}">{{ a.description }} with {{ a.doctor.name}} on {{ a.time|date:"M d, Y"}} at {{a.time|time}}</a></li><br/>
+    <li><a href="{% url 'update' a.id %}">{{ a.description }} with {{ a.doctor.name}} on {{ a.time|date:"M d, Y"}} at {{a.time|time}}</a></li><br/>
     {% endfor %}
 </ul>
 {% endblock %}
