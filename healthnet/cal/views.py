@@ -11,6 +11,7 @@ from django.db import models
 @login_required
 @transaction.atomic
 def show_calendar(request):
+    appointments = ""
     if request.user.person.is_patient:
         appointments = Appointment.objects.filter(patient=request.user.person.id)
     elif request.user.person.is_doctor:
@@ -48,11 +49,10 @@ def create_appointment(request):
     else:
         if request.user.person.is_patient:
             appointment_form = AppointmentForm(initial={'patient':request.user.person.id})
-            del appointment_form.fields['patient']
-            print(appointment_form.fields['doctor'])
+            #del appointment_form.fields['patient']
         if request.user.person.is_doctor:
             appointment_form = AppointmentForm(initial={'doctor':request.user.person.id})
-            del appointment_form.fields['doctor']
+            #del appointment_form.fields['doctor']
 
     return render(request, 'cal/appointments.html', {'appointment_form':appointment_form})
 
