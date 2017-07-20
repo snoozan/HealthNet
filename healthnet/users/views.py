@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, permission_required
@@ -43,8 +44,10 @@ def update_profile(request):
             messages.error(request, 'Please correct the error below.')
     else:
         patient_form = PatientForm(instance=request.user.person)
+        hospitals = Hospital.objects.all()
     return render(request, 'users/profile.html', {
         'patient_form': patient_form,
+        'hospitals': hospitals
     })
 
 
@@ -231,10 +234,13 @@ def admit_patient(request):
         patient.save()
         messages.success(request, 'Patient was successfully admitted!')
 
-    patients = Patient.objects.filter(hospital=request.user.person.hospital_id, admitted=False)
+    patients = Patient.objects.filter(Q(hospital=request.user.person.hospital_id, admitted=False) | Q(admitted=False)).exclude(
+       (Q(name__isnull=True) | Q(name__exact=''))
+    )
 
     return render(request, 'users/admit.html', {
         'patients': patients,
+        'admit': True
     })
 
 @permission_required('users.admit')
@@ -257,13 +263,17 @@ def view_patients(request):
 @transaction.atomic
 def release_patient(request):
     if request.method == 'POST':
-        patient = Patient.objects.get(pk=request.patientid)
+        patient = Patient.objects.get(pk=request.POST.get('id'))
         patient.admitted = False
         patient.save()
-    else:
-        messages.error(request, 'Incorrectly formatted request.')
+        messages.success(request, 'Patient was successfully admitted!')
 
-    return render(request, 'users/profile.html')
+    patients = Patient.objects.order_by('hospital').filter(hospital=request.user.person.hospital_id, admitted=True)
+
+    return render(request, 'users/admit.html', {
+        'patients': patients,
+        'admit': False
+    })
 
 @permission_required('users.transfer')
 @login_required

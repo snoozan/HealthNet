@@ -4,7 +4,7 @@ from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.forms import ModelForm, DateField
+from django.forms import ModelForm, DateField, Widget
 import datetime
 from .hospital import Hospital
 
