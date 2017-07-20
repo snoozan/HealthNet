@@ -1,0 +1,25 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+{% csrf_token %}
+
+    {% if patients %}
+        <table>
+            <tr>
+                <th>Name</th>
+            <tr>
+    {% for patient in patients %}
+            {% if transfer %}
+                <td><a href="{% url 'transfer' pk=patient.id %}">{{ patient.name  }}</a></td>
+            {% else %}
+                <td>{{ patient.name  }}</td>
+            {%  endif %}
+
+        </tr>
+        </table>
+    {%  endfor %}
+        {%  else %}
+        No patients in {{ request.user.person.hospital.name }}
+    {%  endif %}
+
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+    {% csrf_token %}
+    {% for field in profile_form %}
+        <p>
+            {{ field.label_tag }}
+            {% if field.label == 'Hospital' %}
+                {% if request.user.person.hospital.name %}
+                    {{ request.user.person.hospital.name }}
+                {%  else %}
+                    No hospital registered to this user.
+                {% endif %}
+            {% else %}
+                {{ field.as_text }}
+            {% endif %}
+            {% if field.help_text %}
+                <small style="color: grey">{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+                <p style="color: red">{{ error }}</p>
+            {% endfor %}
+        </p>
+    {% endfor %}
+
+{% endblock %}

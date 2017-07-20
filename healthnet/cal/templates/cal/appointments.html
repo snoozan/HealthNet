@@ -1,0 +1,17 @@
+{% extends 'users/base.html' %}
+{% block content %}
+<form method="post" >
+  {% csrf_token %}
+  {{ appointment_form.as_p }}
+Format: mm/dd/yyyy hh:mm<br/><br/>
+{% if request.get_full_path == "/cal/create/" %}
+  <button type="submit" >Create Appointment</button>
+</form>
+{% else %}
+    <button type="submit" >Update Appointment</button>
+</form>
+    <form action={% url 'delete' appointment_id %}>
+        <input type="submit" value="Delete Appointment" />
+    </form>
+{% endif %}
+{% endblock %}

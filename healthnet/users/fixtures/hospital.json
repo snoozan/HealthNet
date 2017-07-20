@@ -1,0 +1,18 @@
+[
+  {
+    "model": "users.hospital",
+    "pk": 1,
+    "fields": {
+      "name": "Strong Memorial Hospital",
+      "address": "Somewhere in Rochester"
+    }
+  },
+  {
+    "model": "users.hospital",
+    "pk": 2,
+    "fields": {
+      "name": "UoR Hospital",
+      "address": "Somewhere in Rochester"
+    }
+  }
+]

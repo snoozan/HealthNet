@@ -1,0 +1,17 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+    <h3>{{ patient.name }} currently in {{ patient.hospital.name }}</h3>
+    <form method="post">
+    {% csrf_token %}
+    <label for="id_hospital">Transfer to:</label>
+    <select name="hospital" id="id_hospital">
+        {% for hospital in hospitals %}
+      <option value={{ hospital.id }}>{{ hospital.name }}</option>
+        {%  endfor %}
+    </select>
+    <input type="text" name="name" value="{{ patient.name }}" id="id_name" required="" maxlength="100" hidden>
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}
+
