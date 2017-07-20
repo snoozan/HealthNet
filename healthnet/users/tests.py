@@ -42,15 +42,17 @@ class PersonTests(TestCase):
 
     def test_admins_can_admit_patients(self):
         a = Admin(name='Logan', user=self.user)
-        request = self.factory.get('/users/admit/')
-        request.user = self.user
+        request = self.factory.post('/users/admit/')
+        request.person = a
+        request.user = a.user
         response = views.update(request)
         self.assertEqual(response.status_code, 200)
 
     def test_admins_can_create_doctor(self):
         a = Admin(name='Logan', user=self.user)
         request = self.factory.post('/users/update_doctor/')
-        request.user = self.user
+        request.person = a
+        request.user = a.user
         response = views.update(request)
         self.assertEqual(response.status_code, 200)
 
@@ -58,7 +60,8 @@ class PersonTests(TestCase):
         Patient.objects.create(name='Logan', user=self.user)
         p = Patient.objects.get(name='Logan')
         request = self.factory.get('users/update_doctor')
-        request.user = self.user
+        request.person = p
+        request.user = p.user
         response = views.update(request)
         self.assertEqual(response.status_code, 200)
 
