@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.forms import ModelForm, DateTimeField, DateField, TimeField
 from users.models import Patient, Doctor, Person
 import datetime
@@ -8,9 +9,9 @@ class Appointment(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     day = models.DateField(default=datetime.date.today)
-    time = models.TimeField(default=datetime.time.now)
+    time = models.TimeField(default=timezone.now)
 class AppointmentForm(ModelForm):
-    date = DateField()
+    day = DateField()
     time = TimeField()
     class Meta:
         model = Appointment
