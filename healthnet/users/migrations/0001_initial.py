@@ -94,4 +94,12 @@ class Migration(migrations.Migration):
             name='user',
             field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
         ),
+        migrations.AlterModelOptions(
+            name='doctor',
+            options={'permissions': (('admit', 'Admit patient'), ('release', 'Release patient'), ('view_cal', 'View patient calendar'))},
+        ),
+        migrations.AlterModelOptions(
+            name='nurse',
+            options={'permissions': (('admit', 'Admit patient'),)},
+        ),
     ]

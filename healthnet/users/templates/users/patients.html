@@ -5,19 +5,18 @@
 
     {% if patients %}
         <table>
-            <tr>
                 <th>Name</th>
-            <tr>
     {% for patient in patients %}
+        <tr>
             {% if transfer %}
                 <td><a href="{% url 'transfer' pk=patient.id %}">{{ patient.name  }}</a></td>
             {% else %}
-                <td>{{ patient.name  }}</td>
+                <td><a href="{% url 'view_calendar' pk=patient.id %}">{{ patient.name  }}</a></td>
             {%  endif %}
 
         </tr>
-        </table>
     {%  endfor %}
+        </table>
         {%  else %}
         No patients in {{ request.user.person.hospital.name }}
     {%  endif %}
