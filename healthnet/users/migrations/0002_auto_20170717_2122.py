@@ -19,6 +19,7 @@ def create_user(apps, schema_editor):
     User.objects.using(db_alias).create(username="admin", password="pbkdf2_sha256$36000$sPr6g8qk2ghI$4WRKCYwkafGcJSnPWbfEq4ePEF8L9CkdTJEaF+s7dfM=")
     User.objects.using(db_alias).create(username="doctor", password="pbkdf2_sha256$36000$sPr6g8qk2ghI$4WRKCYwkafGcJSnPWbfEq4ePEF8L9CkdTJEaF+s7dfM=")
     User.objects.using(db_alias).create(username="nurse", password="pbkdf2_sha256$36000$sPr6g8qk2ghI$4WRKCYwkafGcJSnPWbfEq4ePEF8L9CkdTJEaF+s7dfM=")
+    User.objects.using(db_alias).create(username="patient", password="pbkdf2_sha256$36000$sPr6g8qk2ghI$4WRKCYwkafGcJSnPWbfEq4ePEF8L9CkdTJEaF+s7dfM=")
     Hospital = apps.get_model('users','Hospital')
     Hospital.objects.using(db_alias).create(name="Strong Memorial Hospital", address="Somewhere in Rochester")
     Hospital.objects.using(db_alias).create(name="UoR Hospital", address="Somewhere in Rochester")
@@ -29,7 +30,7 @@ def delete_user(apps, schema_editor):
     Hospital.objects.using(db_alias).get(name="UoR").delete()
     Hospital.objects.using(db_alias).get(name="Strong Memorial Hospital").delete()
     User = apps.get_model('auth','User')
-    User.objects.using(db_alias).get(username="adminUnique").delete()
+    User.objects.using(db_alias).get(username="admin").delete()
 
 def create_admin(apps, schema_editor):
     db_alias = schema_editor.connection.alias
@@ -63,6 +64,25 @@ def create_admin(apps, schema_editor):
     )
     admin.user.user_permissions.add(permission.id)
 
+    Patient = apps.get_model('users', 'Patient')
+    user = User.objects.using(db_alias).get(username="patient")
+    Patient.objects.using(db_alias).create(name="Mary Sue", is_patient=True,
+                                           user_id=user.id,
+                                           hospital=hospital)
+    patient = Patient.objects.using(db_alias).get(user_id=user.id)
+    content_type = ContentType.objects.get_for_model(Patient)
+    permission = Permission.objects.get(
+        codename='update_patient',
+        content_type=content_type,
+    )
+    patient.user.user_permissions.add(permission.id)
+    permission = Permission.objects.get(
+        codename='update',
+        content_type=content_type,
+    )
+    patient.user.user_permissions.add(permission.id)
+    patient.save()
+
     Doctor = apps.get_model('users', 'Doctor')
     user = User.objects.using(db_alias).get(username="doctor")
     Doctor.objects.using(db_alias).create(name="John Smith", is_doctor=True,
@@ -86,6 +106,12 @@ def create_admin(apps, schema_editor):
     content_type = ContentType.objects.get_for_model(apps.get_model('users', 'Doctor'))
     permission = Permission.objects.get(
         codename='release',
+        content_type=content_type,
+    )
+    doctor.user.user_permissions.add(permission.id)
+    nurse.user.user_permissions.add(permission.id)
+    permission = Permission.objects.get(
+        codename='view_cal',
         content_type=content_type,
     )
     doctor.user.user_permissions.add(permission.id)

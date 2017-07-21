@@ -25,12 +25,13 @@ def show_calendar(request):
 
 @login_required
 @transaction.atomic
+@permission_required('users.view_cal')
 def view_calendar(request, pk):
     if request.user.person.is_doctor:
         appointments = Appointment.objects.filter(pk=pk)
     else:
         now = datetime.datetime.now()
-        two_weeks = now + datetime.timedelta(weeks=2)
+        two_weeks = now + datetime.timedelta(weeks=1)
 
         appointments = Appointment.objects.filter(pk, time__range=(now, two_weeks))
     return render(request, 'cal/calendar.html', {'appointments':appointments})

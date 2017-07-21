@@ -1,7 +1,9 @@
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import Permission
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 from django.db import transaction
 
@@ -152,12 +154,30 @@ def create_nurse(request):
             Person.objects.get(pk=user.person.id).delete()
             nurse = Nurse.objects.create(user=user)
             nurse.name = nurse_form.cleaned_data.get('name')
-            nurse.hospital = request.user.person.hospital_id
+            nurse.hospital = Hospital.objects.get(pk=request.user.person.hospital_id)
             nurse.title = nurse_form.cleaned_data.get('title')
             nurse.is_nurse = True
+            content_type = ContentType.objects.get_for_model('Doctor')
+            permission = Permission.objects.get(
+                codename='admit',
+                content_type=content_type,
+            )
+            nurse.user.user_permissions.add(permission.id)
+            content_type = ContentType.objects.get_for_model('Doctor')
+            permission = Permission.objects.get(
+                codename='release',
+                content_type=content_type,
+            )
+            nurse.user.user_permissions.add(permission.id)
+            content_type = ContentType.objects.get_for_model('Doctor')
+            permission = Permission.objects.get(
+                codename='view_calendar',
+                content_type=content_type,
+            )
+            nurse.user.user_permissions.add(permission.id)
             nurse.save()
             messages.success(request, 'Your profile was successfully updated!')
-            return redirect('users/profile')
+            return redirect('update')
         else:
             messages.error(request, 'Please correct the error below.')
     else:
@@ -182,11 +202,29 @@ def create_doctor(request):
             doctor = Doctor.objects.create(user=user)
             doctor.name = doctor_form.cleaned_data.get('name')
             doctor.specialty_field = doctor_form.cleaned_data.get('specialty_field')
-            doctor.hospital = request.user.person.hospital_id
+            doctor.hospital = Hospital.objects.get(pk=request.user.person.hospital_id)
             doctor.is_doctor = True
+            content_type = ContentType.objects.get_for_model('Doctor')
+            permission = Permission.objects.get(
+                codename='admit',
+                content_type=content_type,
+            )
+            doctor.user.user_permissions.add(permission.id)
+            content_type = ContentType.objects.get_for_model('Doctor')
+            permission = Permission.objects.get(
+                codename='release',
+                content_type=content_type,
+            )
+            doctor.user.user_permissions.add(permission.id)
+            content_type = ContentType.objects.get_for_model('Doctor')
+            permission = Permission.objects.get(
+                codename='view_calendar',
+                content_type=content_type,
+            )
+            doctor.user.user_permissions.add(permission.id)
             doctor.save()
             messages.success(request, 'Your profile was successfully updated!')
-            return redirect('users/profile')
+            return redirect('update')
         else:
             messages.error(request, 'Please correct the error below.')
     else:
@@ -209,10 +247,12 @@ def create_admin(request):
             user = account_form.save()
             Person.objects.get(pk=user.person.id).delete()
             admin = Admin.objects.create(user=user)
+            admin.name = admin_form.cleaned_data.get('name')
+            admin.hospital = Hospital.objects.get(pk=request.user.person.hospital_id)
             admin.is_admin = True
             admin.save()
             messages.success(request, 'Your profile was successfully updated!')
-            return redirect('home')
+            return redirect('update')
         else:
             messages.error(request, 'Please correct the error below.')
     else:

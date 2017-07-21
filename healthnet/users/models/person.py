@@ -100,6 +100,7 @@ class Doctor(Person):
         permissions = (
                 ("admit", "Admit patient"),
                 ("release", "Release patient"),
+                ("view_cal", "View patient calendar"),
         )
 
 class DoctorForm(ModelForm):
