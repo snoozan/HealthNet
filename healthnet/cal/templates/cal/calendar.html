@@ -8,8 +8,14 @@
 <ul style="list-style-type:none">
     {% if appointments %}
         {% for a in appointments %}
-        <li><a href="{% url 'update' a.id %}">{{ a.description }} with {{ a.doctor.name}} on {{ a.time|date:"M d, Y"}} at {{a.time|time}}</a></li><br/>
-        {% endfor %}
+            {% if person.is_patient %}
+                <li><a href="{% url 'update' a.id %}">{{ a.description }} with {{ a.doctor.name}} on {{ a.date|date:"M d, Y"}} at {{a.time_hour}}:{{a.time_min}}</a></li><br/>
+            {% elif person.is_doctor %}
+                <li><a href="{% url 'update' a.id %}">{{ a.description }} with {{ a.patient.name}} on {{ a.date|date:"M d, Y"}} at {{a.time_hour}}:{{a.time_min}}</a></li><br/>
+            {% elif person.is_nurse %}
+                <li><a href="{% url 'update' a.id %}"> {{ a.doctor.name}} meeting with {{ a.patient.name }} for {{ a.description }} on {{ a.date|date:"M d, Y"}} at {{a.time_hour}}:{{a.time_min}}</a></li><br/>
+            {% endif %}
+    {% endfor %}
     {% else %}
         No Appointments Available
     {% endif %}
