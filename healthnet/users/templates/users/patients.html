@@ -11,7 +11,7 @@
             {% if transfer %}
                 <td><a href="{% url 'transfer' pk=patient.id %}">{{ patient.name  }}</a></td>
             {% else %}
-                <td><a href="{% url 'view_calendar' pk=patient.id %}"{{ patient.name  }}</td>
+                <td><a href="{% url 'view_calendar' pk=patient.id %}">{{ patient.name  }}</a></td>
             {%  endif %}
 
         </tr>

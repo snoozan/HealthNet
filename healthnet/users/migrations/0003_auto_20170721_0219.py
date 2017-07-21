@@ -162,6 +162,12 @@ def create_people(apps, schema_editor):
             content_type=content_type,
         )
         doctor.user.user_permissions.add(permission.id)
+        content_type = ContentType.objects.get_for_model(apps.get_model('users', 'Doctor'))
+        permission = Permission.objects.get(
+            codename='view_cal',
+            content_type=content_type,
+        )
+        doctor.user.user_permissions.add(permission.id)
         doctor.save()
 
     for name in nurseNames:
@@ -184,6 +190,12 @@ def create_people(apps, schema_editor):
         content_type = ContentType.objects.get_for_model(apps.get_model('users', 'Doctor'))
         permission = Permission.objects.get(
             codename='release',
+            content_type=content_type,
+        )
+        nurse.user.user_permissions.add(permission.id)
+        content_type = ContentType.objects.get_for_model(apps.get_model('users', 'Doctor'))
+        permission = Permission.objects.get(
+            codename='view_cal',
             content_type=content_type,
         )
         nurse.user.user_permissions.add(permission.id)
