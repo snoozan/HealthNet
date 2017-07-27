@@ -11,4 +11,8 @@ lib
 lib64
 *.pyo
 */*.pyc
-__pycache__/*
+healthnet/users/migrations/*
+healthnet/cal/migrations/*
+__pycache__
+db.sqlite3
+.gitignore
