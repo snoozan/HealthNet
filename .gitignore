@@ -10,5 +10,5 @@ src/*.egg-info
 lib
 lib64
 *.pyo
-*/*.pyc
-__pycache__
+*.pyc
+__pycache__/*
