@@ -5,9 +5,13 @@
 {% for field in appointment_form.visible_fields %}
     {{ field.name}}: {{ field }}<br/>
 {% endfor %}
-Day Format: mm/dd/yyyy<br/><br/>
-{% if request.get_full_path == "/cal/create/" %}
-  <button type="submit" >Create Appointment</button>
+Day Format: yyyy/mm/dd<br/><br/>
+{% if create %}
+    <button type="submit" >Create Appointment</button>
+    <input type='hidden' name='appointment_id' value={{appointment_id}}>
+    {% if error %}
+    <a style='color: red;'>{{error}}</a>
+    {% endif %}
 </form>
 {% else %}
     <button type="submit" >Update Appointment</button>
