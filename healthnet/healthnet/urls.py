@@ -21,6 +21,5 @@ urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^users/', include('users.urls')),
     url(r'^admin/', admin.site.urls),
-    url(r'^cal/', include('cal.urls')),
-    url(r'^med/', include('med_information.urls')),
+    url(r'^cal/', include('cal.urls'))
 ]
