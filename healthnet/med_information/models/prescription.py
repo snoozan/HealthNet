@@ -7,26 +7,26 @@ from django.forms import ModelForm, DateField, Widget, ModelChoiceField
 
 class Prescription(models.Model):
 
-    title = models.CharField(max_length=1000, null=True)
+    title = models.CharField(max_length=1000)
 
     startDate = models.DateField(default=timezone.now, null=True)
 
-    duration = models.DurationField(min(0))
+    duration = models.DurationField(default=0)
 
     instructions = models.CharField(max_length=1000, null=True)
 
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, null=True)
 
-    class Meta:
-        permissions = (
-            ("PatientViewing", "DoctorViewing", "NurseViewing"),
-                       )
+#     class Meta:
+#         permissions = (
+#             ("PatientViewing", "DoctorViewing", "NurseViewing"),
+#                        )
 
 
 class PrescriptionForm(ModelForm):
-    patient = ModelChoiceField(required=False, queryset=Patient.objects.all())
+    patient = ModelChoiceField(queryset=Patient.objects.all())
 
     class Meta:
         model = Prescription
-        fields = ('patient', 'title', 'startDate', 'duration', 'instructions')
+        fields = ('title', 'patient', 'startDate', 'duration', 'instructions')

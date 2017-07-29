@@ -37,5 +37,5 @@ def createTestResult(request):
     elif request.method == 'GET':
         result_form = ResultForm()
 
-    return render(request, 'med_information/result', {'result_form':result_form} )
+    return render(request, 'med_information/result.html', {'result_form':result_form} )
 
