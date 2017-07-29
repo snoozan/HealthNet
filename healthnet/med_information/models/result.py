@@ -1,5 +1,5 @@
 from django.db import models
-from django.forms import ModelForm
+from django.forms import ModelForm, ModelChoiceField
 from users.models import Doctor
 from users.models import Patient
 
@@ -16,6 +16,9 @@ class Result(models.Model):
         return self.name
 
 class ResultForm(ModelForm):
+    # FIXME filter by hospital 
+    patient = ModelChoiceField(queryset=Patient.objects.all())
+
     class Meta:
         model = Result
-        fields = ['title', 'comments', 'released']
+        fields = ['title', 'patient', 'comments', 'released']
