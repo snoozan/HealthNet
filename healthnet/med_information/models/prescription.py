@@ -1,10 +1,13 @@
 from django.db import models
 from django.utils import timezone
-from healthnet.users.models import Patient, Doctor, Person, Hospital
-from django.forms import ModelForm, DateField, Widget
+from users.models import Patient, Doctor
+from users.models.hospital import Hospital
+from django.forms import ModelForm, DateField, Widget, ModelChoiceField
 
 
 class Prescription(models.Model):
+
+    title = models.CharField(max_length=1000, null=True)
 
     startDate = models.DateField(default=timezone.now, null=True)
 
@@ -22,7 +25,8 @@ class Prescription(models.Model):
 
 
 class PrescriptionForm(ModelForm):
+    patient = ModelChoiceField(required=False, queryset=Patient.objects.all())
 
     class Meta:
         model = Prescription
-        fields = ('startDate', 'duration', 'instructions')
+        fields = ('patient', 'title', 'startDate', 'duration', 'instructions')
