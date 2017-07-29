@@ -30,7 +30,6 @@ def createTestResult(request):
 
         if result_form.is_valid():
             result = result_form.save()
-            result.refresh_from_db()
             result.doctor = Doctor.objects.get( id=request.user.person.id )
             result.save()
             return redirect('admitted_patients')

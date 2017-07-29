@@ -7,8 +7,8 @@ from users.models import Patient
 class Result(models.Model):
     test_date = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=80)
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, null=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
     comments = models.CharField(max_length=100)
     released = models.BooleanField(default=False)
 
@@ -16,7 +16,7 @@ class Result(models.Model):
         return self.name
 
 class ResultForm(ModelForm):
-    # FIXME filter by hospital 
+    # FIXME filter by hospital
     patient = ModelChoiceField(queryset=Patient.objects.all())
 
     class Meta:
