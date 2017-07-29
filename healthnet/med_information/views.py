@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models.prescription import Prescription
+from .models.prescription import PrescriptionForm, Prescription
 from .models.result import Result, ResultForm
 
 def admitted(request):
@@ -10,10 +10,19 @@ def admitted(request):
         print('posted admitted')
     return render(request, 'med_information/medical_info.html', {'results':results, 'prescriptions':prescriptions})
 
-def prescription(request):
-    return render(request, 'med_information/prescription')
+
+def createPrescription(request):
+    if request.method == 'POST':
+        prescription_form = PrescriptionForm(request.POST)
+        return redirect('admitted_patients')
+    else:
+        prescription_form = PrescriptionForm()
+        return render(request, 'med_information/prescription.html', {'PrescriptionForm':prescription_form})
 
 
+# def viewPrescription(request, pk=None):
+#     if pk is not None:
+#         if request.user.person
 
 def createTestResult(request):
     if request.method == 'POST':
@@ -29,3 +38,4 @@ def createTestResult(request):
         result_form = ResultForm()
 
     return render(request, 'med_information/result', {'result_form':result_form} )
+
