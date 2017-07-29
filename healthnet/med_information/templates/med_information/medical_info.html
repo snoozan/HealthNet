@@ -1,0 +1,10 @@
+{% extends 'users/base.html' %}
+{% block content %}
+{% for result in results %}
+{{result.title}}: created on: {{result.test_date}}
+{% endfor %}
+{% for prescription un prescriptions %}
+{{prescription.patient}}: prescribed by: {{prescription.doctor}}
+{{prescription.instructions}}
+{% endfor %}
+{% endblock %}>
