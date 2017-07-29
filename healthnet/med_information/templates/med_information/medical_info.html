@@ -2,9 +2,12 @@
 {% block content %}
 {% for result in results %}
 {{result.title}}: created on: {{result.test_date}}
+<br/>
 {% endfor %}
+<br/>
 {% for prescription in prescriptions %}
 {{prescription.patient}}: prescribed by: {{prescription.doctor}}
 {{prescription.instructions}}
+<br/>
 {% endfor %}
 {% endblock %}>
