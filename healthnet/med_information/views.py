@@ -1,15 +1,17 @@
 from django.shortcuts import render, redirect
 from .models.prescription import PrescriptionForm, Prescription
 from .models.result import Result, ResultForm
-from users.models.person import Doctor
+from .models.record import Record, RecordForm
+from users.models.person import Doctor, Patient
 
 def admitted(request):
     if request.method == 'GET':
         results = Result.objects.all()
         prescriptions = Prescription.objects.all()
+        records = Record.objects.all()
     elif request.method == 'POST':
         print('posted admitted')
-    return render(request, 'med_information/medical_info.html', {'results':results, 'prescriptions':prescriptions})
+    return render(request, 'med_information/medical_info.html', {'results':results, 'prescriptions':prescriptions, 'records':records})
 
 
 def createPrescription(request):
@@ -46,4 +48,19 @@ def createTestResult(request):
         result_form = ResultForm()
 
     return render(request, 'med_information/result.html', {'result_form':result_form})
+
+def createRecord(request):
+    if request.method == 'POST':
+        record_form = RecordForm(request.POST)
+
+        if record_form.is_valid():
+            record = record_form.save()
+            record.doctor = Doctor.objects.get(id=request.user.person.id)
+            record.save()
+            return redirect('admitted_patients')
+
+    elif request.method == 'GET':
+        record_form = RecordForm()
+
+    return render(request, 'med_information/record.html', {'record_form': record_form})
 

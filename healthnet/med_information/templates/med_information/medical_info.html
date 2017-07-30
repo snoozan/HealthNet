@@ -10,4 +10,10 @@
 {{prescription.instructions}}
 <br/>
 {% endfor %}
+<br/>
+{% for record in records %}
+{{record.patient}}: prescribed by: {{record.doctor}}
+{{record.instructions}}
+<br/>
+{% endfor %}
 {% endblock %}>
