@@ -36,7 +36,8 @@
             <button type="submit">Discharge</button></form></td>
         <td><input type="button" onclick="location.href='';" value="Edit" /></td>
         <td><input type="button" onclick="location.href='';" value="View" /></td>
-        <td><input type="button" onclick="location.href='{% url 'view_prescription' patientid=patient.id %}';" value="View" /></td>
+        <td><input type="button" onclick="location.href='{% url 'view_prescription' patientid=patient.id %}';" value="View" />
+        <input type="button" onclick="location.href='{% url 'create_prescription' patientid=patient.id %}';" value="Add" /></td>
     </tr>
     {% endfor %}
 
@@ -48,7 +49,8 @@
             <button type="submit">Admit</button></form></td>
         <td><input type="button" onclick="location.href='';" value="View" /></td>
         <td><input type="button" onclick="location.href='';" value="View" /></td>
-        <td><input type="button" onclick="location.href='{% url 'view_prescription' patientid=patient.id %}';" value="View" /></td>
+        <td><input type="button" onclick="location.href='{% url 'view_prescription' patientid=patient.id %}';" value="View" />
+        <input type="button" onclick="location.href='{% url 'create_prescription' patientid=patient.id %}';" value="Add" /></td>
     </tr>
     {% endfor %}
 

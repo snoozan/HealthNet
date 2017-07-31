@@ -8,18 +8,26 @@ from .models.result import Result, ResultForm
 from .models.record import Record, RecordForm
 from users.models.person import Doctor, Patient
 
-def createPrescription(request):
+def createPrescription(request, patientid=None):
     if request.method == 'POST':
         prescription_form = PrescriptionForm(request.POST)
 
         if prescription_form.is_valid():
-            result = prescription_form.save()
-            Prescription.doctor = Doctor.objects.get(id=request.user.person.id)
-            result.save()
-            return redirect('view_prescription')
+            prescription = prescription_form.save()
+            if request.user.person.is_doctor:
+                prescription.doctor = Doctor.objects.get(id=request.user.person.id)
+            if patientid is not None:
+                prescription.patient = Patient.objects.get(id=patientid)
+            prescription.save()
+        else:
+            print('we have an error')
+
+        return redirect('view_prescription', patientid=patientid)
 
     else:
         prescription_form = PrescriptionForm()
+        if patientid is not None:
+            del prescription_form.fields['patient']
         return render(request, 'med_information/prescription.html', {'PrescriptionForm':prescription_form})
 
 @login_required
@@ -35,7 +43,7 @@ def updatePrescription(request, prescriptionid):
                 prescription.instructions = prescription_form.cleaned_data['instructions']
                 prescription.save()
                 messages.success(request, "Prescription Updated!")
-                return redirect('viewPrescriptions')
+                return redirect('view_prescription')
     else:
         prescription_form = PrescriptionForm(instance=Prescription.objects.get(id=prescriptionid))
         del prescription_form.fields['startDate']
@@ -49,7 +57,7 @@ def viewPrescription(request, patientid=None):
     if patientid is not None:
         patient = Patient.objects.get(id = patientid)
     else:
-        patient = Patient.objects.get(person = request.user.person)
+        patient = Patient.objects.get(user = request.user)
 
     prescriptions = Prescription.objects.filter(patient=patient)
 
