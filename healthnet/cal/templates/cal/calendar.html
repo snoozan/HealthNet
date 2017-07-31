@@ -1,35 +1,23 @@
 {% extends 'users/base.html' %}
 {% block content %}
 {% csrf_token %}
-
-{% if did %}
-    <a href="{% url 'createwithdoctor' did=did %}">create appointment</a><br/>
-{% elif pid %}
-    <a href="{% url 'createwithpatient' pid=pid %}">create appointment</a><br/>
-{% else %}
-
-    <a href="{% url 'create' %}">create appointment</a><br/>
-{% endif %}
+<a href="{% url 'create' %}">Create appointment</a><br/>
 <h3>
-    {% if name %}
-    <u>Appointments with {{name}}</u>
-    {% else %}
     <u>Appointments</u>
-    {% endif %}
 </h3>
-<ul style="list-style-type:none">
+<ul class="list-unstyled">
     {% if appointments %}
         {% for a in appointments %}
-            {% if request.user.person.is_patient %}
+            {% if person.is_patient %}
                 <li><a href="{% url 'update' a.id %}">{{ a.description }} with {{ a.doctor.name}} on {{ a.date|date:"M d, Y"}} at {{a.time_hour}}:{{a.time_min}}</a></li><br/>
-            {% elif request.user.person.is_doctor %}
+            {% elif person.is_doctor %}
                 <li><a href="{% url 'update' a.id %}">{{ a.description }} with {{ a.patient.name}} on {{ a.date|date:"M d, Y"}} at {{a.time_hour}}:{{a.time_min}}</a></li><br/>
-            {% elif request.user.person.is_nurse %}
+            {% elif person.is_nurse %}
                 <li><a href="{% url 'update' a.id %}"> {{ a.doctor.name}} meeting with {{ a.patient.name }} for {{ a.description }} on {{ a.date|date:"M d, Y"}} at {{a.time_hour}}:{{a.time_min}}</a></li><br/>
             {% endif %}
     {% endfor %}
     {% else %}
-        No Appointments Available
+    No Appointments Available
     {% endif %}
 </ul>
 {% endblock %}
