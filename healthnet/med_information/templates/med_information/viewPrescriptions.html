@@ -1,0 +1,27 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+{% csrf_token %}
+
+    {% if patients %}
+        <table>
+                <th>Prescription</th>
+    {% for prescription in prescriptions %}
+        <tr>
+                <td><a href="{% url 'prescription' patientid=patient.id %}">{{ prescription.title  }}</a></td>
+
+        </tr>
+    {%  endfor %}
+        </table>
+        {%  else %}
+        <table>
+                <th>Prescription</th>
+    {% for prescription in prescriptions %}
+        <tr>
+                <td><a href="{% url 'prescription' prescriptionid=prescription.id %}">{{ prescription.title  }}</a></td>
+
+        </tr>
+    {%  endfor %}
+        </table>
+    {%  endif %}
+{% endblock %}
