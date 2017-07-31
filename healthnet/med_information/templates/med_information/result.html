@@ -1,0 +1,10 @@
+{% extends 'users/base.html' %}
+{% block content %}
+<form method="post" >
+  {% csrf_token %}
+{% for field in result_form %}
+    {{ field.name}}: {{ field }}<br/>
+{% endfor %}
+<button type="submit">Submit</button>
+</form>
+{% endblock %}
