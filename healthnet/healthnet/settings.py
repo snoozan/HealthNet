@@ -110,7 +110,69 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+        'person_login': {
+            'class': 'logging.FileHandler',
+            'filename': 'logs/personLogin.log',
+        },
+        'patient_medical_viewing': {
+            'class': 'logging.FileHandler',
+            'filename': 'logs/patientMedicalViewing.log',
+        },
+        'patient_transfer': {
+            'class': 'logging.FileHandler',
+            'filename': 'logs/patientTransfer.log',
+        },
+        'discharge_patient': {
+            'class': 'logging.FileHandler',
+            'filename': 'logs/dischargePatient.log',
+        },
+        'admit_patient': {
+            'class': 'logging.FileHandler',
+            'filename': 'logs/admitPatient.log',
+        },
+        'admit_patient_emergency': {
+            'class': 'logging.FileHandler',
+            'filename': 'logs/admitPatientEmergency.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+        'person_login': {
+            'handlers': ['person_login'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+        'patient_medical_viewing': {
+            'handlers': ['patient_medical_viewing'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+        'patient_transfer': {
+            'handlers': ['patient_transfer'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+        'discharge_patient': {
+            'handlers': ['discharge_patient'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+        'admit_patient': {
+            'handlers': ['admit_patient'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+        'admit_patient_emergency': {
+            'handlers': ['admit_patient_emergency'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
