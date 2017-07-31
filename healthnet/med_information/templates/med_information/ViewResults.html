@@ -1,0 +1,28 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+<head>
+<!--got rid of style-->
+</head>
+
+<h2>
+    Prescriptions for {{patient.name}}
+</h2>
+
+<table>
+    <th>Title</th>
+    <th>Started on</th>
+    <th>Duration</th>
+    <th>Instructions</th>
+
+    {% for p in prescriptions %}
+    <tr>
+        <td>{{p.title}}</td>
+        <td>{{p.startDate}}</td>
+        <td>{{p.duration}}</td>
+        <td>{{p.instructions}}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
