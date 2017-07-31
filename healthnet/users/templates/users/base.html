@@ -36,7 +36,6 @@
         <li><a class="navbar-brand" href="{% url 'create_admin' %}">Create Admin</a></li>
     {% endif %}
     {% if user.person.is_doctor or user.person.is_nurse %}
-        <li><a class="navbar-brand" href="{% url 'admit_patient' %}">Admit Patients</a></li>
         <li><a class="navbar-brand" href="{% url 'view_patients' %}">View Patients</a></li>
     {% endif %}
     {% if user.person.is_patient %}
