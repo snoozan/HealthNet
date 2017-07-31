@@ -1,0 +1,17 @@
+.patienttable {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+.patienttable td, th {
+    border: 1px solid #000000;
+    text-align: center;
+}
+.navcustom{
+    padding: 15px;
+    margin-bottom: 100px;
+    color: white;
+    background: black;
+}
