@@ -1082,10 +1082,10 @@ html {
 }
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 14px;
-  color: gray;
+  font-size: 18px;
+  color: black;
   line-height: 1.42857143;
-  background-color: #141413;
+  background-color: white;
 }
 input,
 button,
@@ -1265,6 +1265,7 @@ h6 .small,
 h1,
 .h1 {
   font-size: 36px;
+  color: white;
 }
 h2,
 .h2 {
@@ -1582,13 +1583,9 @@ pre code {
   overflow-y: scroll;
 }
 .container {
-  margin-top: 100px;
-  margin-bottom: 50px;
   padding: 15px;
   margin-right: auto;
   margin-left: auto;
-  border-radius: 5px;
-  background: black;
 }
 
 @media (min-width: 768px) {
@@ -2267,7 +2264,7 @@ th {
 }
 .table {
   text-align: center;
-  width: 25%;
+  width: 90%;
   max-width: 100%;
   margin-bottom: 20px;
   margin-right: auto;
