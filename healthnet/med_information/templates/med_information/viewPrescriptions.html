@@ -24,6 +24,7 @@
     <th>Started on</th>
     <th>Duration</th>
     <th>Instructions</th>
+    <th></th>
 
     {% for p in prescriptions %}
     <tr>
@@ -31,6 +32,7 @@
         <td>{{p.startDate}}</td>
         <td>{{p.duration}}</td>
         <td>{{p.instructions}}</td>
+        <td><input type="button" onclick="location.href='{% url 'update_prescription' prescriptionid=p.id %}';" value="edit" /></td>
     </tr>
     {% endfor %}
 </table>
