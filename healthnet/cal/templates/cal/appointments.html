@@ -46,6 +46,7 @@
 </form>
 {% else %}
     <button type="submit" >Update Appointment</button>
+</form>
     <form action={% url 'delete' appointment_id %}>
         <input type="submit" value="Delete Appointment" />
     </form>
