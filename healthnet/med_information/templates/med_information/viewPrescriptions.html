@@ -1,27 +1,38 @@
 {% extends 'users/base.html' %}
 
 {% block content %}
-{% csrf_token %}
+<head>
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 90%;
+    }
+    td, th {
+        border: 1px solid #000000;
+        text-align: center;
+    }
+</style>
+</head>
 
-    {% if patients %}
-        <table>
-                <th>Prescription</th>
-    {% for prescription in prescriptions %}
-        <tr>
-                <td><a href="{% url 'prescription' patientid=patient.id %}">{{ prescription.title  }}</a></td>
+<h2>
+    Prescriptions for {{patient.name}}
+</h2>
 
-        </tr>
-    {%  endfor %}
-        </table>
-        {%  else %}
-        <table>
-                <th>Prescription</th>
-    {% for prescription in prescriptions %}
-        <tr>
-                <td><a href="{% url 'prescription' prescriptionid=prescription.id %}">{{ prescription.title  }}</a></td>
+<table>
+    <th>Title</th>
+    <th>Started on</th>
+    <th>Duration</th>
+    <th>Instructions</th>
 
-        </tr>
-    {%  endfor %}
-        </table>
-    {%  endif %}
+    {% for p in prescriptions %}
+    <tr>
+        <td>{{p.title}}</td>
+        <td>{{p.startDate}}</td>
+        <td>{{p.duration}}</td>
+        <td>{{p.instructions}}</td>
+    </tr>
+    {% endfor %}
+</table>
+
 {% endblock %}
