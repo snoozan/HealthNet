@@ -45,7 +45,6 @@
         <a href="{% url 'create_admin' %}">Create Admin</a>
     {% endif %}
     {% if user.person.is_doctor or user.person.is_nurse %}
-        <a href="{% url 'admit_patient' %}">Admit Patients</a>
         <a href="{% url 'view_patients' %}">View Patients</a>
     {% endif %}
     {% if user.person.is_patient %}

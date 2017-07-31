@@ -4,16 +4,6 @@ from .models.result import Result, ResultForm
 from .models.record import Record, RecordForm
 from users.models.person import Doctor, Patient
 
-def admitted(request):
-    if request.method == 'GET':
-        results = Result.objects.all()
-        prescriptions = Prescription.objects.all()
-        records = Record.objects.all()
-    elif request.method == 'POST':
-        print('posted admitted')
-    return render(request, 'med_information/medical_info.html', {'results':results, 'prescriptions':prescriptions, 'records':records})
-
-
 def createPrescription(request):
     if request.method == 'POST':
         prescription_form = PrescriptionForm(request.POST)
@@ -28,11 +18,6 @@ def createPrescription(request):
     else:
         prescription_form = PrescriptionForm()
         return render(request, 'med_information/prescription.html', {'PrescriptionForm':prescription_form})
-
-
-# def viewPrescription(request, pk=None):
-#     if pk is not None:
-#         if request.user.person
 
 def createTestResult(request):
     if request.method == 'POST':
