@@ -2,12 +2,12 @@
 {% block content %}
 {% csrf_token %}
 {% if did %}
-    <a href="{% url 'createwithdoctor' did=did %}">create appointment</a><br/>
+    <a class="navbar-brand" href="{% url 'createwithdoctor' did=did %}">Create Appointment</a><br/>
 {% elif pid %}
-    <a href="{% url 'createwithpatient' pid=pid %}">create appointment</a><br/>
+    <a class="navbar-brand" href="{% url 'createwithpatient' pid=pid %}">Create Appointment</a><br/>
 {% else %}
 
-    <a href="{% url 'create' %}">create appointment</a><br/>
+    <a href="{% url 'create' %}">Create Appointment</a><br/>
 {% endif %}
 <h3>
     {% if name %}
@@ -16,7 +16,7 @@
     <u>Appointments</u>
     {% endif %}
 </h3>
-<ul style="list-style-type:none">
+<ul class="list-unstyled">
     {% if appointments %}
         {% for a in appointments %}
             {% if request.user.person.is_patient %}

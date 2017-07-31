@@ -1,25 +1,11 @@
 {% extends 'users/base.html' %}
 
 {% block content %}
-<head>
-<style>
-    table {
-        font-family: arial, sans-serif;
-        border-collapse: collapse;
-        width: 90%;
-    }
-    td, th {
-        border: 1px solid #000000;
-        text-align: center;
-    }
-</style>
-</head>
-
 <h2>
     Patients of {{hospital.name}}
 </h2>
 
-<table>
+<table class="patienttable text-center">
     <tr>
         <th>Name</th>
         <th>Admitted?</th>
@@ -64,8 +50,8 @@
 
 <!--
     {% if patients %}
-        <table>
-                <th>Name</th>
+        <table class="table-bordered table">
+                <th class="text-center">Name</th>
     {% for patient in patients %}
         <tr>
             {% if transfer %}
