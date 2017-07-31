@@ -1,6 +1,7 @@
 {% extends 'users/base.html' %}
 {% block content %}
 {% csrf_token %}
+
 {% if did %}
     <a href="{% url 'createwithdoctor' did=did %}">create appointment</a><br/>
 {% elif pid %}

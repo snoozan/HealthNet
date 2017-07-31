@@ -1,34 +1,3 @@
-<head>
-        <!-- Special version of Bootstrap that only affects content wrapped in .bootstrap-iso -->
-    <link rel="stylesheet" href="https://formden.com/static/cdn/bootstrap-iso.css" />
-
-    <!--Font Awesome (added because you use icons in your prepend/append)-->
-    <link rel="stylesheet" href="https://formden.com/static/cdn/font-awesome/4.4.0/css/font-awesome.min.css" />
-
-    <!-- Inline CSS based on choices in "Settings" tab -->
-    <style>.bootstrap-iso .formden_header h2, .bootstrap-iso .formden_header p, .bootstrap-iso form{font-family: Arial, Helvetica, sans-serif; color: black}.bootstrap-iso form button, .bootstrap-iso form button:hover{color: white !important;} .asteriskField{color: red;}</style>
-
-    <!-- Extra JavaScript/CSS added manually in "Settings" tab -->
-    <!-- Include jQuery -->
-    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-
-    <!-- Include Date Range Picker -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
-
-    <script>
-        $(document).ready(function(){
-            var date_input=$('input[name="date"]'); //our date input has the name "date"
-            var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
-            date_input.datepicker({
-                format: 'yyyy-mm-dd',
-                container: container,
-                todayHighlight: true,
-                autoclose: true,
-            })
-        })
-    </script>
-</head>
 {% extends 'users/base.html' %}
 {% block content %}
 <form method="post" >
@@ -36,7 +5,7 @@
 {% for field in appointment_form.visible_fields %}
     {{ field.name}}: {{ field }}<br/>
 {% endfor %}
-<br/>
+Day Format: yyyy/mm/dd<br/><br/>
 {% if create %}
     <button type="submit" >Create Appointment</button>
     <input type='hidden' name='appointment_id' value={{appointment_id}}>
@@ -46,6 +15,7 @@
 </form>
 {% else %}
     <button type="submit" >Update Appointment</button>
+</form>
     <form action={% url 'delete' appointment_id %}>
         <input type="submit" value="Delete Appointment" />
     </form>
