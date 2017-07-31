@@ -35,6 +35,8 @@ def createPrescription(request, patientid=None):
 def updatePrescription(request, prescriptionid):
     if request.method == 'POST':
         prescription_form = PrescriptionForm(request.POST)
+        del prescription_form.fields['startDate']
+
         if prescription_form.is_valid():
             prescription = Prescription.objects.get(id=prescriptionid)
             if request.user.person.is_doctor:
@@ -43,12 +45,15 @@ def updatePrescription(request, prescriptionid):
                 prescription.instructions = prescription_form.cleaned_data['instructions']
                 prescription.save()
                 messages.success(request, "Prescription Updated!")
-                return redirect('view_prescription')
+                return redirect('view_prescription', patientid=prescription.patient.id)
+        else:
+            print('houston we have an error')
     else:
         prescription_form = PrescriptionForm(instance=Prescription.objects.get(id=prescriptionid))
         del prescription_form.fields['startDate']
 
-    return render(request, 'cal/appointments.html', {'prescriptionForm':prescription_form, 'prescriptionid':prescriptionid})
+
+    return render(request, 'med_information/prescription.html', {'prescriptionForm':prescription_form, 'prescriptionid':prescriptionid})
 
 
 @login_required
