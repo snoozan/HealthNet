@@ -12,3 +12,4 @@ lib64
 *.pyo
 *.pyc
 __pycache__/*
+.idea/
