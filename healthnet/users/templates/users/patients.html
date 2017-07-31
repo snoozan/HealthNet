@@ -4,8 +4,8 @@
 {% csrf_token %}
 
     {% if patients %}
-        <table>
-                <th>Name</th>
+        <table class="table-bordered table">
+                <th class="text-center">Name</th>
     {% for patient in patients %}
         <tr>
             {% if transfer %}
