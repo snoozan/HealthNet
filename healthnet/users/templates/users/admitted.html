@@ -1,0 +1,39 @@
+{% extends 'users/base.html' %}
+{% block content %}
+<head>
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 90%;
+    }
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: center;
+    }
+    tr: nth-child(even) {
+        background-color: #dddddd;
+    }
+</style>
+</head>
+<table>
+    <tr>
+        <th>Patients Admitted to {{hospital.name}}</th>
+        <th>Date Admitted</th>
+        <th>Record</th>
+        <th>Test Results</th>
+        <th>Prescriptions</th>
+    </tr>
+    {% for patient in patients %}
+    <tr>
+        <td>{{patient.name}}</td>
+        <td></td>
+        <td><input type="button" onclick="location.href='';" value="Edit/View Current Record" /></td>
+        <td><input type="button" onclick="location.href='';" value="View/Edit/Release Test Results" /></td>
+        <td><input type="button" onclick="location.href='';" value="View/Edit/Add Prescriptions" /></td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+{% endblock %}>
