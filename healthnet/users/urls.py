@@ -17,12 +17,9 @@ urlpatterns = [
     url(r'^create_doctor/$', views.create_doctor, name='create_doctor'),
     url(r'^create_admin/$', views.create_admin, name='create_admin'),
     url(r'^update_employees/$', views.update, name='update'),
-    #url(r'^admit/$', views.admit_patient, name='admit_patient'),
     url(r'^patients/$', views.view_patients, name='view_patients'),
-    url(r'^release/$', views.release_patient, name='release_patient'),
     url(r'^transfer/$', views.transfer_view, name='transfer_patients'),
     url(r'^transfer/(?P<pk>[0-9]+)/$', views.transfer_patient, name='transfer'),
     url(r'^logs/$', views.logs, name='logs'),
-    #url(r'^admitted/$', views.admitted_patients, name='admitted_patients'),
 ]
 
