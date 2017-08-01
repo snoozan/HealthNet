@@ -320,27 +320,54 @@ def admit_patient(request):
             type = type,
             currHospital = request.user.person.hospital.name,
         ))
+# @permission_required('users.admit')
+# @login_required
+# @transaction.atomic
+# def admit_patient(request):
+#     if request.method == 'POST':
+#         patient = Patient.objects.get(pk=request.POST.get('id'))
+#         patient.admitted = True
+#         patient.save()
+#         messages.success(request, 'Patient was successfully admitted!')
 
-    patients = Patient.objects.filter(Q(hospital=request.user.person.hospital_id, admitted=False) | Q(admitted=False)).exclude(
-       (Q(name__isnull=True) | Q(name__exact=''))
-    )
+#     patients = Patient.objects.filter(Q(hospital=request.user.person.hospital_id, admitted=False))#.exclude( Q(name__isnull=True) | Q(name__exact='')))
 
-    return render(request, 'users/admit.html', {
-        'patients': patients,
-        'admit': True
-    })
+#     return render(request, 'users/admit.html', {
+#         'patients': patients,
+#         'admit': True
+#     })
+
+# def admitted_patients(request):#List all patients currently admitted in current Hospital_ access: Doctors and Nurses
+#     if request.method == 'GET':
+#         hospital = request.user.person.hospital
+#         patients = Patient.objects.filter(Q(hospital=hospital, admitted=True))#.exclude( Q(name__isnull=True) | Q(name__exact='')))
+
+#     else:
+#         print('posted admitted')#Get page only, no submit
+
+#     return render(request, 'users/admitted.html', {'hospital': hospital, 'patients':patients})
+
 
 @permission_required('users.admit')
 @login_required
 @transaction.atomic
 def view_patients(request):
-    if(request.user.person.is_nurse):
-        patients = Patient.objects.filter(hospital=request.user.person.hospital_id)
-    else:
-        patients = Patient.objects.all()
+    hospital = request.user.person.hospital
+    if request.method == 'POST':
+        patient = Patient.objects.get(pk=request.POST.get('id'))
+        if patient.admitted:
+            patient.admitted = False
+        else:
+            patient.admitted = True
+
+        patient.save()
+    inpatients = Patient.objects.filter(Q(hospital=hospital, admitted=True))
+    outpatients = Patient.objects.filter(Q(hospital=hospital, admitted=False))
 
     return render(request, 'users/patients.html', {
-        'patients': patients,
+        'hospital': hospital,
+        'in_patients': inpatients,
+        'out_patients': outpatients,
     })
 
 

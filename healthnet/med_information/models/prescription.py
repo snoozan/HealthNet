@@ -25,7 +25,7 @@ class Prescription(models.Model):
 
 
 class PrescriptionForm(ModelForm):
-    patient = ModelChoiceField(queryset=Patient.objects.all())
+    patient = ModelChoiceField(queryset=Patient.objects.all(), required=False)
 
     class Meta:
         model = Prescription

@@ -1,0 +1,40 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+<head>
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 90%;
+    }
+    td, th {
+        border: 1px solid #000000;
+        text-align: center;
+    }
+</style>
+</head>
+
+<h2>
+    Prescriptions for {{patient.name}}
+</h2>
+
+<table>
+    <th>Title</th>
+    <th>Started on</th>
+    <th>Duration</th>
+    <th>Instructions</th>
+    <th></th>
+
+    {% for p in prescriptions %}
+    <tr>
+        <td>{{p.title}}</td>
+        <td>{{p.startDate}}</td>
+        <td>{{p.duration}}</td>
+        <td>{{p.instructions}}</td>
+        <td><input type="button" onclick="location.href='{% url 'update_prescription' prescriptionid=p.id %}';" value="edit" /></td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

@@ -1,8 +1,56 @@
 {% extends 'users/base.html' %}
 
 {% block content %}
-{% csrf_token %}
+<h2>
+    Patients of {{hospital.name}}
+</h2>
 
+<table class="patienttable text-center">
+    <tr>
+        <th>Name</th>
+        <th>Admitted?</th>
+        <th>Record</th>
+        <th>Test Results</th>
+        <th>Prescriptions</th>
+    </tr>
+
+    {% for patient in in_patients %}
+    <tr style='background-color: #ffffff'>
+        <td>{{patient.name}}</td>
+        <td><form method="post"><input type="text" name="id" value="{{ patient.id }}" hidden>
+            {% csrf_token %}
+            <button type="submit">Discharge</button></form></td>
+        <td><input type="button" onclick="location.href='';" value="Edit" /></td>
+        <td><input type="button" onclick="location.href='';" value="View" /></td>
+        <td><input type="button" onclick="location.href='{% url 'view_prescription' patientid=patient.id %}';" value="View" />
+        <input type="button" onclick="location.href='{% url 'create_prescription' patientid=patient.id %}';" value="Add" /></td>
+    </tr>
+    {% endfor %}
+
+    {% for patient in out_patients %}
+    <tr style='background-color: #dddddd;' >
+        <td>{{patient.name}}</td>
+        <td><form method="post"><input type="text" name="id" value="{{ patient.id }}" hidden>
+            {% csrf_token %}
+            <button type="submit">Admit</button></form></td>
+        <td><input type="button" onclick="location.href='';" value="View" /></td>
+        <td><input type="button" onclick="location.href='';" value="View" /></td>
+        <td><input type="button" onclick="location.href='{% url 'view_prescription' patientid=patient.id %}';" value="View" />
+        <input type="button" onclick="location.href='{% url 'create_prescription' patientid=patient.id %}';" value="Add" /></td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+
+
+
+
+
+
+
+
+<!--
     {% if patients %}
         <table class="table-bordered table">
                 <th class="text-center">Name</th>
@@ -20,5 +68,6 @@
         {%  else %}
             No patients in {{ request.user.person.hospital.name }}
     {%  endif %}
+-->
 
 {% endblock %}
