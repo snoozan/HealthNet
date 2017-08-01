@@ -8,19 +8,25 @@ from .models.result import Result, ResultForm
 from .models.record import Record, RecordForm
 from users.models.person import Doctor, Patient
 
+
+@login_required
+@transaction.atomic
 def createPrescription(request, patientid=None):
     if request.method == 'POST':
         prescription_form = PrescriptionForm(request.POST)
-
+        del prescription_form.fields['patient']
         if prescription_form.is_valid():
             prescription = prescription_form.save()
             if request.user.person.is_doctor:
                 prescription.doctor = Doctor.objects.get(id=request.user.person.id)
             if patientid is not None:
                 prescription.patient = Patient.objects.get(id=patientid)
+            else:
+                print('patient id doesnt exist')
             prescription.save()
+
         else:
-            print('we have an error')
+            print('Form not valid')
 
         return redirect('view_prescription', patientid=patientid)
 
@@ -35,6 +41,8 @@ def createPrescription(request, patientid=None):
 def updatePrescription(request, prescriptionid):
     if request.method == 'POST':
         prescription_form = PrescriptionForm(request.POST)
+        del prescription_form.fields['startDate']
+
         if prescription_form.is_valid():
             prescription = Prescription.objects.get(id=prescriptionid)
             if request.user.person.is_doctor:
@@ -43,12 +51,15 @@ def updatePrescription(request, prescriptionid):
                 prescription.instructions = prescription_form.cleaned_data['instructions']
                 prescription.save()
                 messages.success(request, "Prescription Updated!")
-                return redirect('view_prescription')
+                return redirect('view_prescription', patientid=prescription.patient.id)
+        else:
+            print('houston we have an error')
     else:
         prescription_form = PrescriptionForm(instance=Prescription.objects.get(id=prescriptionid))
         del prescription_form.fields['startDate']
 
-    return render(request, 'med_information/viewPrescriptions.html', {'prescriptionForm':prescription_form, 'prescriptionid':prescriptionid})
+    return render(request, 'med_information/viewPrescriptions.html', {'PrescriptionForm':prescription_form, 'prescriptionid':prescriptionid})
+
 
 
 @login_required
@@ -63,19 +74,26 @@ def viewPrescription(request, patientid=None):
 
     return render(request, 'med_information/viewPrescriptions.html', {'prescriptions':prescriptions, 'patient':patient})
 
+
+@login_required
+@transaction.atomic
 def createTestResult(request, patientid=None):
     if request.method == 'POST':
         result_form = ResultForm(request.POST)
-        #del result_form.fields['patient']
+        del result_form.fields['patient']
         if result_form.is_valid():
             result = result_form.save()
             if request.user.person.is_doctor:
                 result.doctor = Doctor.objects.get(id=request.user.person.id)
             if patientid is not None:
+                print('patient set, id exists')
                 result.patient = Patient.objects.get(id=patientid)
+            else:
+                print('patient id doesnt exist')
             result.save()
+
         else:
-            print('We have an error')
+            print('Form not valid')
 
         return redirect('view_result', patientid=patientid)
 
@@ -101,12 +119,12 @@ def updateTestResult(request, resultid):
                 result.released = result_form.cleaned_data['released']
                 result.save()
                 messages.success(request, "Test Result Updated!")
-                return redirect('viewResults')
+                return redirect('view_result')
     else:
         result_form = ResultForm(instance=Result.objects.get(id=resultid))
         del result_form.fields['test_date']
 
-    return render(request, 'cal/appointments.html', {'prescriptionForm':prescription_form, 'prescriptionid':prescriptionid})
+    return render(request, 'med_information/viewResults', {'ResultForm':result_form, 'resultid':resultid})
 
 
 @login_required
@@ -122,6 +140,8 @@ def viewTestResult(request, patientid=None):
     return render(request, 'med_information/viewResults.html', {'results':results, 'patient':patient})
 
 
+@login_required
+@transaction.atomic
 def createRecord(request):
     if request.method == 'POST':
         record_form = RecordForm(request.POST)

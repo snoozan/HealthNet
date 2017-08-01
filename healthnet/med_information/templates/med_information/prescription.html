@@ -2,8 +2,11 @@
 {% block content %}
 <form method="post" >
   {% csrf_token %}
-{% for field in PrescriptionForm %}
+    {% for field in PrescriptionForm %}
     {{ field.name}}: {{ field }}<br/>
+    {% if prescriptionid %}
+        <input type='text' name='prescriptionid' value="{{prescriptionid}}" hidden>
+    {% endif %}
 {% endfor %}
 <button type="submit">Submit</button>
 </form>
