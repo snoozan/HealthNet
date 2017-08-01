@@ -29,4 +29,4 @@ class PrescriptionForm(ModelForm):
 
     class Meta:
         model = Prescription
-        fields = ('title', 'patient', 'startDate', 'duration', 'instructions')
+        fields = ('patient', 'title', 'startDate', 'duration', 'instructions')

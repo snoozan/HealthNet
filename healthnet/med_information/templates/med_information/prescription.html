@@ -2,7 +2,7 @@
 {% block content %}
 <form method="post" >
   {% csrf_token %}
-    {% for field in prescriptionForm %}
+    {% for field in PrescriptionForm %}
     {{ field.name}}: {{ field }}<br/>
     {% if prescriptionid %}
         <input type='text' name='prescriptionid' value="{{prescriptionid}}" hidden>
