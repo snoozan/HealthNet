@@ -22,7 +22,7 @@
         {% if request.get_full_path == "/cal/" %}
                 <li><a class="navbar-brand" href="{% url 'home' %}">Home</a></li>
         {% else %}
-            {% if user.person.name %}
+            {% if user.person.name and not user.person.is_admin %}
                 <li><a class="navbar-brand list-inline-item" href="{% url 'calendar' %}">Calendar</a></li>
             {% endif %}
         {% endif %}
@@ -39,7 +39,7 @@
         <li><a class="navbar-brand" href="{% url 'create_nurse' %}">Create Nurse</a></li>
         <li><a class="navbar-brand" href="{% url 'create_admin' %}">Create Admin</a></li>
         <li><a class="navbar-brand" href="{% url 'logs' %}">View Activity Logs</a></li>
-        <li><a class="navbar-brand" href="{% url 'stats' %}">View Activity Logs</a></li>
+        <li><a class="navbar-brand" href="{% url 'stats' %}">View Hospital Stats</a></li>
     {% endif %}
     {% if user.person.is_doctor or user.person.is_nurse %}
         <li><a class="navbar-brand" href="{% url 'view_patients' %}">View Patients</a></li>
