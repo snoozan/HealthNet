@@ -42,6 +42,7 @@ def updatePrescription(request, prescriptionid):
     if request.method == 'POST':
         prescription_form = PrescriptionForm(request.POST)
         del prescription_form.fields['startDate']
+        del prescription_form.fields['patient']
 
         if prescription_form.is_valid():
             prescription = Prescription.objects.get(id=prescriptionid)
@@ -57,8 +58,9 @@ def updatePrescription(request, prescriptionid):
     else:
         prescription_form = PrescriptionForm(instance=Prescription.objects.get(id=prescriptionid))
         del prescription_form.fields['startDate']
+        del prescription_form.fields['patient']
 
-    return render(request, 'med_information/viewPrescriptions.html', {'PrescriptionForm':prescription_form, 'prescriptionid':prescriptionid})
+    return render(request, 'med_information/prescription.html', {'PrescriptionForm':prescription_form, 'prescriptionid':prescriptionid})
 
 
 
@@ -109,22 +111,25 @@ def createTestResult(request, patientid=None):
 def updateTestResult(request, resultid):
     if request.method == 'POST':
         result_form = ResultForm(request.POST)
+        del result_form.fields['patient']
+
         if result_form.is_valid():
             result = Result.objects.get(id=resultid)
             if request.user.person.is_doctor:
-                result.patient = result_form.cleaned_data['patient']
-                result.test_date = result_form.cleaned_data['test_date']
+                #result.patient = result_form.cleaned_data['patient']
                 result.title = result_form.cleaned_data['title']
                 result.comments = result_form.cleaned_data['comments']
                 result.released = result_form.cleaned_data['released']
                 result.save()
                 messages.success(request, "Test Result Updated!")
-                return redirect('view_result')
+                return redirect('view_result', patientid=result.patient.id)
+        else:
+            print('Form not valid')
     else:
         result_form = ResultForm(instance=Result.objects.get(id=resultid))
-        del result_form.fields['test_date']
+        del result_form.fields['patient']
 
-    return render(request, 'med_information/viewResults', {'ResultForm':result_form, 'resultid':resultid})
+    return render(request, 'med_information/result.html', {'ResultForm':result_form, 'resultid':resultid})
 
 
 @login_required

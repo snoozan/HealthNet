@@ -15,6 +15,7 @@ class Result(models.Model):
     def __str__(self):
         return self.title
 
+
 class ResultForm(ModelForm):
     # FIXME filter by hospital
     patient = ModelChoiceField(queryset=Patient.objects.all())
