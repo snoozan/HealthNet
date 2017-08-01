@@ -114,6 +114,7 @@ class Admin(Person):
                 ("transfer", "Transfer patient"),
                 ("update_patient", "Signup as a user"),
                 ("update", "Signup as a user"),
+                ("logs", "Look at activity logs"),
         )
 
 class AdminForm(ModelForm):

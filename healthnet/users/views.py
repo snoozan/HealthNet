@@ -1,15 +1,42 @@
+import os
+
+from DateTime import DateTime
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, User
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 from django.db import transaction
+from django.contrib.auth.signals import user_logged_in, user_logged_out, user_login_failed
+from django.dispatch import receiver
+
+import logging
 
 from users.models import Hospital
 from .models.person import PatientForm, SignupForm, DoctorForm, NurseForm, AdminForm, Admin, Nurse
 from .models.person import Patient, Doctor, Person
+
+@receiver(user_logged_in)
+def user_logged_in_callback(sender, request, user, **kwargs):
+
+    loggerName = "UoR" if "UoR" in request.user.person.hospital.name else "Strong"
+    logger = logging.getLogger(loggerName)
+    logger.info('login name:{user} username:{username}'.format(
+        user=user.person.name,
+        username=user.username,
+    ))
+
+@receiver(user_logged_out)
+def user_logged_out_callback(sender, request, user, **kwargs):
+
+    loggerName = "UoR" if "UoR" in request.user.person.hospital.name else "Strong"
+    logger = logging.getLogger(loggerName)
+    logger.info('logout name:{user} username:{username}'.format(
+        user=user.person.name,
+        username=user.username,
+    ))
 
 
 # Create your views here.
@@ -71,6 +98,17 @@ def signup_patient(request):
         patient_form = SignupForm()
     return render(request, 'users/signup.html', {
         'patient_form': patient_form
+    })
+
+@permission_required('users.logs')
+@login_required
+def logs(request):
+    fname = "logs/UoR.log" if "UoR" in request.user.person.hospital.name else "logs/Strong.log"
+    print(os.path.isfile(fname))
+    with open(fname) as f:
+        content = f.readlines()
+    return render(request, 'users/logs.html', {
+        'logs': content
     })
 
 @permission_required('users.update')
@@ -264,6 +302,24 @@ def create_admin(request):
     })
 
 
+@permission_required('users.admit')
+@login_required
+@transaction.atomic
+def admit_patient(request):
+    loggerName = "UoR" if "UoR" in request.user.person.hospital.name else "Strong"
+    logger = logging.getLogger(loggerName)
+    if request.method == 'POST':
+        patient = Patient.objects.get(pk=request.POST.get('id'))
+        patient.admitted = True
+        patient.save()
+        messages.success(request, 'Patient was successfully admitted!')
+        type = "admin" if request.user.person.is_admin else "doctor"
+        logger.info('Admit patient:{patient} by {user}:{type} to {currHospital}'.format(
+            patient = patient.name,
+            user= request.user.person.name,
+            type = type,
+            currHospital = request.user.person.hospital.name,
+        ))
 # @permission_required('users.admit')
 # @login_required
 # @transaction.atomic
@@ -320,11 +376,20 @@ def view_patients(request):
 @login_required
 @transaction.atomic
 def release_patient(request):
+    loggerName = "UoR" if "UoR" in request.user.person.hospital.name else "Strong"
+    logger = logging.getLogger(loggerName)
     if request.method == 'POST':
         patient = Patient.objects.get(pk=request.POST.get('id'))
         patient.admitted = False
         patient.save()
         messages.success(request, 'Patient was successfully admitted!')
+        type = "nurse" if request.user.person.is_nurse else "doctor"
+        logger.info('Discharge patient: {patient} by {user}:{type} from {currHospital}'.format(
+            patient = patient.name,
+            user= request.user.name,
+            type = type,
+            currHospital = request.user.person.hospital.name,
+        ))
 
     patients = Patient.objects.order_by('hospital').filter(hospital=request.user.person.hospital_id, admitted=True)
 
@@ -349,6 +414,8 @@ def transfer_view(request):
 @login_required
 @transaction.atomic
 def transfer_patient(request, pk):
+    loggerName = "UoR" if "UoR" in request.user.person.hospital.name else "Strong"
+    logger = logging.getLogger(loggerName)
     if request.method == 'POST':
         patient = Patient.objects.get(pk=pk)
         patient_form = PatientForm(request.POST, instance=patient)
@@ -357,6 +424,14 @@ def transfer_patient(request, pk):
             patient_form.save()
             messages.success(request, 'Patient was transferred successfully!')
             hospitals = Hospital.objects.exclude(pk=Patient.objects.get(pk=pk).hospital_id)
+            type = "admin" if request.user.person.is_admin else "doctor"
+            logger.info('transfer patient:{patient} by {user}:{type} from {currHospital} to {newHospital}'.format(
+                patient = patient.name,
+                user= request.user.person.name,
+                type = type,
+                currHospital = request.user.person.hospital.name,
+                newHospital = patient.hospital.name
+            ))
         else:
             messages.error(request, 'Incorrectly formatted request.')
 

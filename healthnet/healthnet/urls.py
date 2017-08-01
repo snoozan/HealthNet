@@ -23,4 +23,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^cal/', include('cal.urls')),
     url(r'^med/', include('med_information.urls')),
+    url(r'^stats/', include('stats.urls')),
 ]
