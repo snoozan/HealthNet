@@ -114,6 +114,11 @@ def create_people(apps, schema_editor):
             content_type=content_type,
         )
         admin.user.user_permissions.add(permission.id)
+        permission = Permission.objects.get(
+            codename='logs',
+            content_type=content_type,
+        )
+        admin.user.user_permissions.add(permission.id)
         admin.save()
 
     for name in patientNames:
