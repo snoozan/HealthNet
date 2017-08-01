@@ -46,13 +46,11 @@
         {% if request.get_full_path == "/cal/" %}
             <li><a class="navbar-brand" href="{% url 'home' %}"><h4>Home</h4></a></li>
         {% else %}
-<<<<<<< HEAD
-            <li><a class="navbar-brand list-inline-item" href="{% url 'calendar' %}"><h4>Calendar</h4></a></li>
-=======
+
             {% if user.person.name %}
-                <li><a class="navbar-brand list-inline-item" href="{% url 'calendar' %}">Calendar</a></li>
+                <li><a class="navbar-brand list-inline-item" href="{% url 'calendar' %}"><h4>Calendar</h4></a></li>
             {% endif %}
->>>>>>> a800855698878c3f90ccbe233f7eb3741c3392d8
+
         {% endif %}
 
       {% else %}
