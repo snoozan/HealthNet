@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'users',
     'med_information',
     'cal',
+    'stats',
 ]
 
 MIDDLEWARE = [

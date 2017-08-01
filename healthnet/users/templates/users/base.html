@@ -37,6 +37,7 @@
         <li><a class="navbar-brand" href="{% url 'create_nurse' %}">Create Nurse</a></li>
         <li><a class="navbar-brand" href="{% url 'create_admin' %}">Create Admin</a></li>
         <li><a class="navbar-brand" href="{% url 'logs' %}">View Activity Logs</a></li>
+        <li><a class="navbar-brand" href="{% url 'stats' %}">View Activity Logs</a></li>
     {% endif %}
     {% if user.person.is_doctor or user.person.is_nurse %}
         <li><a class="navbar-brand" href="{% url 'view_patients' %}">View Patients</a></li>
