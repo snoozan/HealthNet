@@ -13,7 +13,8 @@ class Result(models.Model):
     released = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.name
+        return self.title
+
 
 class ResultForm(ModelForm):
     # FIXME filter by hospital
