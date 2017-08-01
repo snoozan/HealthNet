@@ -1,0 +1,10 @@
+{% extends 'users/base.html' %}
+{% block content %}
+{% csrf_token %}
+    <ul class="list-group">
+    {% for log in logs %}
+       <li class="list-group-item"> {{ log }} </li>
+    {% endfor %}
+    </ul>
+{% endblock %}
+

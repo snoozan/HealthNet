@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'users',
     'med_information',
     'cal',
+    'stats',
 ]
 
 MIDDLEWARE = [
@@ -110,7 +111,44 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'log_format': {
+            'format': '%(asctime)s %(module)s %(message)s'
+        }
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+        'UoR': {
+            'class': 'logging.FileHandler',
+            'filename': 'logs/UoR.log',
+            'formatter' : 'log_format',
+        },
+        'Strong': {
+            'class': 'logging.FileHandler',
+            'filename': 'logs/Strong.log',
+            'formatter' : 'log_format',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+        'UoR': {
+            'handlers': ['UoR'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+        'Strong': {
+            'handlers': ['Strong'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

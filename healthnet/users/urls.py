@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^release/$', views.release_patient, name='release_patient'),
     url(r'^transfer/$', views.transfer_view, name='transfer_patients'),
     url(r'^transfer/(?P<pk>[0-9]+)/$', views.transfer_patient, name='transfer'),
+    url(r'^logs/$', views.logs, name='logs'),
     #url(r'^admitted/$', views.admitted_patients, name='admitted_patients'),
 ]
 
