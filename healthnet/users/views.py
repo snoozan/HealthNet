@@ -20,7 +20,8 @@ from .models.person import Patient, Doctor, Person
 
 @receiver(user_logged_in)
 def user_logged_in_callback(sender, request, user, **kwargs):
-
+    if request.user.person.hospital is None:
+        return
     loggerName = "UoR" if "UoR" in request.user.person.hospital.name else "Strong"
     logger = logging.getLogger(loggerName)
     logger.info('login name:{user} username:{username}'.format(
@@ -30,7 +31,6 @@ def user_logged_in_callback(sender, request, user, **kwargs):
 
 @receiver(user_logged_out)
 def user_logged_out_callback(sender, request, user, **kwargs):
-
     loggerName = "UoR" if "UoR" in request.user.person.hospital.name else "Strong"
     logger = logging.getLogger(loggerName)
     logger.info('logout name:{user} username:{username}'.format(
@@ -93,7 +93,8 @@ def signup_patient(request):
             login(request, user)
             messages.success(request, 'You successfully signed up!')
             return redirect('home')
-        else: messages.error(request, 'Please correct the error below.')
+        else:
+            messages.error(request, 'Please correct the error below.')
     else:
         patient_form = SignupForm()
     return render(request, 'users/signup.html', {
@@ -305,60 +306,29 @@ def create_admin(request):
 @permission_required('users.admit')
 @login_required
 @transaction.atomic
-def admit_patient(request):
+def view_patients(request):
     loggerName = "UoR" if "UoR" in request.user.person.hospital.name else "Strong"
     logger = logging.getLogger(loggerName)
-    if request.method == 'POST':
-        patient = Patient.objects.get(pk=request.POST.get('id'))
-        patient.admitted = True
-        patient.save()
-        messages.success(request, 'Patient was successfully admitted!')
-        type = "admin" if request.user.person.is_admin else "doctor"
-        logger.info('Admit patient:{patient} by {user}:{type} to {currHospital}'.format(
-            patient = patient.name,
-            user= request.user.person.name,
-            type = type,
-            currHospital = request.user.person.hospital.name,
-        ))
-# @permission_required('users.admit')
-# @login_required
-# @transaction.atomic
-# def admit_patient(request):
-#     if request.method == 'POST':
-#         patient = Patient.objects.get(pk=request.POST.get('id'))
-#         patient.admitted = True
-#         patient.save()
-#         messages.success(request, 'Patient was successfully admitted!')
-
-#     patients = Patient.objects.filter(Q(hospital=request.user.person.hospital_id, admitted=False))#.exclude( Q(name__isnull=True) | Q(name__exact='')))
-
-#     return render(request, 'users/admit.html', {
-#         'patients': patients,
-#         'admit': True
-#     })
-
-# def admitted_patients(request):#List all patients currently admitted in current Hospital_ access: Doctors and Nurses
-#     if request.method == 'GET':
-#         hospital = request.user.person.hospital
-#         patients = Patient.objects.filter(Q(hospital=hospital, admitted=True))#.exclude( Q(name__isnull=True) | Q(name__exact='')))
-
-#     else:
-#         print('posted admitted')#Get page only, no submit
-
-#     return render(request, 'users/admitted.html', {'hospital': hospital, 'patients':patients})
-
-
-@permission_required('users.admit')
-@login_required
-@transaction.atomic
-def view_patients(request):
     hospital = request.user.person.hospital
+    type = "admin" if request.user.person.is_admin else "doctor"
     if request.method == 'POST':
         patient = Patient.objects.get(pk=request.POST.get('id'))
         if patient.admitted:
             patient.admitted = False
         else:
+            logger.info('Admit patient:{patient} by {user}:{type} to {currHospital}'.format(
+                patient = patient.name,
+                user= request.user.person.name,
+                type = type,
+                currHospital = request.user.person.hospital.name,
+            ))
             patient.admitted = True
+            logger.info('Discharge patient:{patient} by {user}:{type} from {currHospital}'.format(
+                patient = patient.name,
+                user= request.user.person.name,
+                type = type,
+                currHospital = request.user.person.hospital.name,
+            ))
 
         patient.save()
     inpatients = Patient.objects.filter(Q(hospital=hospital, admitted=True))
@@ -370,33 +340,6 @@ def view_patients(request):
         'out_patients': outpatients,
     })
 
-
-
-@permission_required('users.release')
-@login_required
-@transaction.atomic
-def release_patient(request):
-    loggerName = "UoR" if "UoR" in request.user.person.hospital.name else "Strong"
-    logger = logging.getLogger(loggerName)
-    if request.method == 'POST':
-        patient = Patient.objects.get(pk=request.POST.get('id'))
-        patient.admitted = False
-        patient.save()
-        messages.success(request, 'Patient was successfully admitted!')
-        type = "nurse" if request.user.person.is_nurse else "doctor"
-        logger.info('Discharge patient: {patient} by {user}:{type} from {currHospital}'.format(
-            patient = patient.name,
-            user= request.user.name,
-            type = type,
-            currHospital = request.user.person.hospital.name,
-        ))
-
-    patients = Patient.objects.order_by('hospital').filter(hospital=request.user.person.hospital_id, admitted=True)
-
-    return render(request, 'users/admit.html', {
-        'patients': patients,
-        'admit': False
-    })
 
 @permission_required('users.transfer')
 @login_required
