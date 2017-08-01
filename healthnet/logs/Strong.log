@@ -6,3 +6,7 @@
 2017-07-31 20:57:18,366 views logout name:mary username:mary
 2017-07-31 20:57:45,109 views login name:melissa username:melissa
 2017-07-31 20:57:48,591 views logout name:melissa username:melissa
+2017-08-01 15:14:05,001 views logout name:Meow username:meow
+2017-08-01 15:15:11,933 views logout name:Johnny username:newuser
+2017-08-01 15:15:21,783 views login name:Johnny username:newuser
+2017-08-01 15:15:25,804 views logout name:Johnny username:newuser

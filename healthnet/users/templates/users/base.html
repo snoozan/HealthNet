@@ -22,7 +22,9 @@
         {% if request.get_full_path == "/cal/" %}
                 <li><a class="navbar-brand" href="{% url 'home' %}">Home</a></li>
         {% else %}
+            {% if user.person.name %}
                 <li><a class="navbar-brand list-inline-item" href="{% url 'calendar' %}">Calendar</a></li>
+            {% endif %}
         {% endif %}
 
       {% else %}
