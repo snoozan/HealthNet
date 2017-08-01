@@ -2,25 +2,35 @@
 
 {% block content %}
 <head>
-<!--got rid of style-->
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 90%;
+    }
+    td, th {
+        border: 1px solid #000000;
+        text-align: center;
+    }
+</style>
 </head>
 
 <h2>
-    Prescriptions for {{patient.name}}
+    Results for {{patient.name}}
 </h2>
 
 <table>
+    <th>Test Date</th>
     <th>Title</th>
-    <th>Started on</th>
-    <th>Duration</th>
-    <th>Instructions</th>
+    <th>Comments</th>
+    <th>Released</th>
 
-    {% for p in prescriptions %}
+    {% for r in results %}
     <tr>
-        <td>{{p.title}}</td>
-        <td>{{p.startDate}}</td>
-        <td>{{p.duration}}</td>
-        <td>{{p.instructions}}</td>
+        <td>{{r.test_date}}</td>
+        <td>{{r.title}}</td>
+        <td>{{r.comments}}</td>
+        <td>{{r.released}}</td>
     </tr>
     {% endfor %}
 </table>

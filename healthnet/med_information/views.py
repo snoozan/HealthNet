@@ -63,20 +63,27 @@ def viewPrescription(request, patientid=None):
 
     return render(request, 'med_information/viewPrescriptions.html', {'prescriptions':prescriptions, 'patient':patient})
 
-def createTestResult(request):
+def createTestResult(request, patientid=None):
     if request.method == 'POST':
         result_form = ResultForm(request.POST)
-
+        #del result_form.fields['patient']
         if result_form.is_valid():
             result = result_form.save()
-            result.doctor = Doctor.objects.get( id=request.user.person.id )
+            if request.user.person.is_doctor:
+                result.doctor = Doctor.objects.get(id=request.user.person.id)
+            if patientid is not None:
+                result.patient = Patient.objects.get(id=patientid)
             result.save()
-            return redirect('admitted_patients')
+        else:
+            print('We have an error')
 
-    elif request.method == 'GET':
+        return redirect('view_result', patientid=patientid)
+
+    else:
         result_form = ResultForm()
-
-    return render(request, 'med_information/result.html', {'result_form':result_form})
+        if patientid is not None:
+            del result_form.fields['patient']
+        return render(request, 'med_information/result.html', {'ResultForm':result_form})
 
 
 @login_required
@@ -87,6 +94,7 @@ def updateTestResult(request, resultid):
         if result_form.is_valid():
             result = Result.objects.get(id=resultid)
             if request.user.person.is_doctor:
+                result.patient = result_form.cleaned_data['patient']
                 result.test_date = result_form.cleaned_data['test_date']
                 result.title = result_form.cleaned_data['title']
                 result.comments = result_form.cleaned_data['comments']
@@ -105,13 +113,13 @@ def updateTestResult(request, resultid):
 @transaction.atomic
 def viewTestResult(request, patientid=None):
     if patientid is not None:
-        patient = Patient.objects.get(id = patientid)
+        patient = Patient.objects.get(id=patientid)
     else:
-        patient = Patient.objects.get(person = request.user.person)
+        patient = Patient.objects.get(user=request.user)
 
-    prescriptions = Prescription.objects.filter(patient=patient)
+    results = Result.objects.filter(patient=patient)
 
-    return render(request, 'med_information/viewPrescriptions.html', {'prescriptions':prescriptions, 'patient':patient})
+    return render(request, 'med_information/viewResults.html', {'results':results, 'patient':patient})
 
 
 def createRecord(request):
