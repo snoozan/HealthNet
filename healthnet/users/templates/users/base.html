@@ -7,47 +7,71 @@
     <link href="{% static "css/bootstrap.css" %}" rel="stylesheet">
     <link href="{% static "datepicker/css/bootstrap-datepicker.css" %}" rel="stylesheet">
     <link href="{% static "css/custom.css" %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://formden.com/static/cdn/bootstrap-iso.css" />
+    <link rel="stylesheet" href="https://formden.com/static/cdn/font-awesome/4.4.0/css/font-awesome.min.css" />
+    <style>.bootstrap-iso .formden_header h2, .bootstrap-iso .formden_header p, .bootstrap-iso form{font-family: Arial, Helvetica, sans-serif; color: black}.bootstrap-iso form button, .bootstrap-iso form button:hover{color: white !important;} .asteriskField{color: red;}</style>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+
+    <script>
+        $(document).ready(function(){
+            var date_input=$('input[name="date"]'); //our date input has the name "date"
+            var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+            date_input.datepicker({
+                format: 'yyyy-mm-dd',
+                container: container,
+                todayHighlight: true,
+                autoclose: true,
+            })
+        })
+    </script>
     <title>{% block title %}HealthNet{% endblock %}</title>
   </head>
   <body>
-  <div class="container text-center">
+    <div class="text-center">
     <div class="navcustom">
     <header>
-      <h1>My Site</h1>
-      <nav class="navbar">
-      <div class="container-fluid">
+      <div class="jumbotron centernav">
+      {% if user.is_authenticated %}
+          <div class="pull-right gotop">
+          <a class="navbar-brand" href="{% url 'logout' %}"><h4>Logout</h4></a>
+          </div>
+      {% endif %}
+      <h2>HealthNet</h2>
+      <div class="container-fluid text-center">
       <ul class="list-inline">
       {% if user.is_authenticated %}
-                <li><a class="navbar-brand list-inline-item" href="{% url 'logout' %}">Logout</a></li>
+
         {% if request.get_full_path == "/cal/" %}
-                <li><a class="navbar-brand" href="{% url 'home' %}">Home</a></li>
+            <li><a class="navbar-brand" href="{% url 'home' %}"><h4>Home</h4></a></li>
         {% else %}
-                <li><a class="navbar-brand list-inline-item" href="{% url 'calendar' %}">Calendar</a></li>
+            <li><a class="navbar-brand list-inline-item" href="{% url 'calendar' %}"><h4>Calendar</h4></a></li>
         {% endif %}
 
       {% else %}
-              <li><a class="navbar-brand" href="{% url 'login' %}">Login</a></li>
-              <li><a class="navbar-brand" href="{% url 'signup' %}">Signup</a></li>
+          <li><a class="navbar-brand" href="{% url 'login' %}"><h4>Login</h4></a></li>
+          <li><a class="navbar-brand" href="{% url 'signup' %}"><h4>Signup</h4></a></li>
       {% endif %}
 
     {% if user.person.is_admin %}
-        <li><a class="navbar-brand" href="{% url 'transfer_patients' %}">Transfer Patients</a></li>
-        <li><a class="navbar-brand" href="{% url 'update' %}">Update Employees</a></li>
-        <li><a class="navbar-brand" href="{% url 'create_doctor' %}">Create Doctor</a></li>
-        <li><a class="navbar-brand" href="{% url 'create_nurse' %}">Create Nurse</a></li>
-        <li><a class="navbar-brand" href="{% url 'create_admin' %}">Create Admin</a></li>
-        <li><a class="navbar-brand" href="{% url 'logs' %}">View Activity Logs</a></li>
-        <li><a class="navbar-brand" href="{% url 'stats' %}">View Activity Logs</a></li>
+        <li><a class="navbar-brand" href="{% url 'transfer_patients' %}"><h4>Transfer Patients</h4></a></li>
+        <li><a class="navbar-brand" href="{% url 'update' %}"><h4>Update Employees</h4></a></li>
+        <li><a class="navbar-brand" href="{% url 'create_doctor' %}"><h4>Create Doctor</h4></a></li>
+        <li><a class="navbar-brand" href="{% url 'create_nurse' %}"><h4>Create Nurse</h4></a></li>
+        <li><a class="navbar-brand" href="{% url 'create_admin' %}"><h4>Create Admin</h4></a></li>
+        <li><a class="navbar-brand" href="{% url 'logs' %}"><h4>Activity Logs</h4></a></li>
+        <li><a class="navbar-brand" href="{% url 'stats' %}"><h4>Activity Logs</h4></a></li>
     {% endif %}
     {% if user.person.is_doctor or user.person.is_nurse %}
-        <li><a class="navbar-brand" href="{% url 'view_patients' %}">View Patients</a></li>
+        <li><a class="navbar-brand" href="{% url 'view_patients' %}"><h4>View Patients</h4></a></li>
     {% endif %}
     {% if user.person.is_patient %}
-            <li><a class="navbar-brand" href="{% url 'update_patient' %}">Update Profile</a></li>
+        <li><a class="navbar-brand" href="{% url 'update_patient' %}"><h4>Update Profile</h4></a></li>
     {% endif %}
       </ul>
       </div>
-      </nav>
+      </div>
     </header>
     </div>
     <main>

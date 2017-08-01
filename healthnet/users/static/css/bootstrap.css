@@ -2264,7 +2264,6 @@ th {
 }
 .table {
   text-align: center;
-  width: 90%;
   max-width: 100%;
   margin-bottom: 20px;
   margin-right: auto;
@@ -4282,8 +4281,6 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   padding: 15px 15px;
   font-size: 18px;
   line-height: 20px;
-  background: black;
-  border: solid black;
 }
 .navbar-brand:hover,
 .navbar-brand:focus {
