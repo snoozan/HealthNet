@@ -46,14 +46,8 @@
         {% if request.get_full_path == "/cal/" %}
             <li><a class="navbar-brand" href="{% url 'home' %}"><h4>Home</h4></a></li>
         {% else %}
-<<<<<<< HEAD
-
-            {% if user.person.name %}
-                <li><a class="navbar-brand list-inline-item" href="{% url 'calendar' %}"><h4>Calendar</h4></a></li>
-=======
             {% if user.person.name and not user.person.is_admin %}
-                <li><a class="navbar-brand list-inline-item" href="{% url 'calendar' %}">Calendar</a></li>
->>>>>>> 375378345fd734e1a5eef2bd683350e65ea60d8e
+                <li><a class="navbar-brand list-inline-item" href="{% url 'calendar' %}"><h4>Calendar</h4></a></li>
             {% endif %}
 
         {% endif %}
@@ -64,23 +58,13 @@
       {% endif %}
 
     {% if user.person.is_admin %}
-<<<<<<< HEAD
         <li><a class="navbar-brand" href="{% url 'transfer_patients' %}"><h4>Transfer Patients</h4></a></li>
         <li><a class="navbar-brand" href="{% url 'update' %}"><h4>Update Employees</h4></a></li>
         <li><a class="navbar-brand" href="{% url 'create_doctor' %}"><h4>Create Doctor</h4></a></li>
         <li><a class="navbar-brand" href="{% url 'create_nurse' %}"><h4>Create Nurse</h4></a></li>
         <li><a class="navbar-brand" href="{% url 'create_admin' %}"><h4>Create Admin</h4></a></li>
-        <li><a class="navbar-brand" href="{% url 'logs' %}"><h4>Activity Logs</h4></a></li>
-        <li><a class="navbar-brand" href="{% url 'stats' %}"><h4>Activity Logs</h4></a></li>
-=======
-        <li><a class="navbar-brand" href="{% url 'transfer_patients' %}">Transfer Patients</a></li>
-        <li><a class="navbar-brand" href="{% url 'update' %}">Update Employees</a></li>
-        <li><a class="navbar-brand" href="{% url 'create_doctor' %}">Create Doctor</a></li>
-        <li><a class="navbar-brand" href="{% url 'create_nurse' %}">Create Nurse</a></li>
-        <li><a class="navbar-brand" href="{% url 'create_admin' %}">Create Admin</a></li>
-        <li><a class="navbar-brand" href="{% url 'logs' %}">View Activity Logs</a></li>
-        <li><a class="navbar-brand" href="{% url 'stats' %}">View Hospital Stats</a></li>
->>>>>>> 375378345fd734e1a5eef2bd683350e65ea60d8e
+        <li><a class="navbar-brand" href="{% url 'logs' %}"><h4>View Activity Logs</h4></a></li>
+        <li><a class="navbar-brand" href="{% url 'stats' %}"><h4>View Hospital Stats</h4></a></li>
     {% endif %}
     {% if user.person.is_doctor or user.person.is_nurse %}
         <li><a class="navbar-brand" href="{% url 'view_patients' %}"><h4>View Patients</h4></a></li>
