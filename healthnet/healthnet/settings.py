@@ -113,33 +113,24 @@ AUTH_PASSWORD_VALIDATORS = [
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'log_format': {
+            'format': '%(asctime)s %(module)s %(message)s'
+        }
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
         },
-        'person_login': {
+        'UoR': {
             'class': 'logging.FileHandler',
-            'filename': 'logs/personLogin.log',
+            'filename': 'logs/UoR.log',
+            'formatter' : 'log_format',
         },
-        'patient_medical_viewing': {
+        'Strong': {
             'class': 'logging.FileHandler',
-            'filename': 'logs/patientMedicalViewing.log',
-        },
-        'patient_transfer': {
-            'class': 'logging.FileHandler',
-            'filename': 'logs/patientTransfer.log',
-        },
-        'discharge_patient': {
-            'class': 'logging.FileHandler',
-            'filename': 'logs/dischargePatient.log',
-        },
-        'admit_patient': {
-            'class': 'logging.FileHandler',
-            'filename': 'logs/admitPatient.log',
-        },
-        'admit_patient_emergency': {
-            'class': 'logging.FileHandler',
-            'filename': 'logs/admitPatientEmergency.log',
+            'filename': 'logs/Strong.log',
+            'formatter' : 'log_format',
         },
     },
     'loggers': {
@@ -147,28 +138,12 @@ LOGGING = {
             'handlers': ['console'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
         },
-        'person_login': {
-            'handlers': ['person_login'],
+        'UoR': {
+            'handlers': ['UoR'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
         },
-        'patient_medical_viewing': {
-            'handlers': ['patient_medical_viewing'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
-        },
-        'patient_transfer': {
-            'handlers': ['patient_transfer'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
-        },
-        'discharge_patient': {
-            'handlers': ['discharge_patient'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
-        },
-        'admit_patient': {
-            'handlers': ['admit_patient'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
-        },
-        'admit_patient_emergency': {
-            'handlers': ['admit_patient_emergency'],
+        'Strong': {
+            'handlers': ['Strong'],
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
         },
     },

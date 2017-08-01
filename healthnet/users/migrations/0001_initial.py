@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
                 ('person_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='users.Person')),
             ],
             options={
-                'permissions': (('transfer', 'Transfer patient'), ('update_patient', 'Signup as a user'), ('update', 'Signup as a user')),
+                'permissions': (('transfer', 'Transfer patient'), ('update_patient', 'Signup as a user'), ('update', 'Signup as a user'), ('logs', 'Look at activity logs')),
             },
             bases=('users.person',),
         ),
