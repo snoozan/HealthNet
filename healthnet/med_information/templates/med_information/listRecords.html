@@ -35,7 +35,7 @@
     {% if records|length == 0 %}
     <tr>
         <td colspan="10">No records
-        {% if not request.user.person.is_patient %}
+        {% if request.user.person.is_doctor %}
         <input type="button" onclick="location.href='{% url 'create_record' patientid=patient.id %}';" value="add" /></td></td>
         {% endif %}
     </tr>

@@ -9,7 +9,7 @@ from .models.record import Record, RecordForm
 from users.models.person import Doctor, Patient
 
 
-@permission_required('users.create_med_info')
+@permission_required('users.view_med_info')
 @login_required
 def viewMedical(request, patientid=None):
     if request.method == 'GET':
@@ -25,6 +25,8 @@ def viewMedical(request, patientid=None):
         prescriptions = Prescription.objects.filter(patient=patient)
         return render(request, 'med_information/medical_info.html', {'patient':patient, 'records':records, 'results':results, 'prescriptions':prescriptions})
 
+
+@permission_required('users.create_med_info')
 @login_required
 @transaction.atomic
 def createPrescription(request, patientid=None):
