@@ -27,3 +27,16 @@
     margin-left: auto;
     margin-right: auto;
 }
+.formsize{
+    width: 25%;
+}
+.createsize{
+    width: 60%;
+}
+.createsize ul{
+    list-style: none;
+    text-align: left;
+}
+.recordsize{
+    width: 30%;
+}

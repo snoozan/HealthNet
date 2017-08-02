@@ -6,7 +6,52 @@
         <p>
             {{ field.label_tag }}
             {% if field.label == 'Hospital' %}
-                {% if request.user.person.hospital.name %}
+                {% if request.user.person.hospital %}
+                    {{request.user.person.hospital.name}}
+                {% else %}
+                    {{field}}
+                {% endif %}
+
+            {% else %}
+                {{ field }}
+
+            {% endif %}
+            {% if field.help_text %}
+                <small style="color: grey">{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+                <p style="color: red">{{ error }}</p>
+            {% endfor %}
+        </p>
+    {% endfor %}
+    <div class="text-left centerdiv createsize list-unstyle">
+        {{ account_form.as_p }}
+    </div>
+    <div class="text-left centerdiv formsize">
+        {{ nurse_form.as_p }}
+    </div>
+    <div class="text-left centerdiv formsize">
+        {{ admin_form.as_p }}
+    </div>
+    <div class="text-left centerdiv formsize list-unstyled">
+        {% for field in doctor_form %}
+            <p>
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}
+                <small style="color: grey">{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+                <p style="color: red">{{ error }}</p>
+            {% endfor %}
+            </p>
+    {% endfor %}
+    </div>
+    <button type="submit">Save changes</button>
+</form>
+{% endblock %}
+
+<!--{% if request.user.person.hospital.name %}
                     {{ request.user.person.hospital.name }}
                 {%  else %}
                     <label for="id_hospital">Apply to:</label>
@@ -15,33 +60,4 @@
                             <option value={{ hospital.id }}>{{ hospital.name }}</option>
                         {%  endfor %}
                     </select>
-                {% endif %}
-            {% else %}
-                {{ field.as_text }}
-            {% endif %}
-            {% if field.help_text %}
-                <small style="color: grey">{{ field.help_text }}</small>
-            {% endif %}
-            {% for error in field.errors %}
-                <p style="color: red">{{ error }}</p>
-            {% endfor %}
-        </p>
-    {% endfor %}
-    {{ nurse_form.as_p }}
-    {{ admin_form.as_p }}
-    {{ account_form.as_p }}
-    {% for field in doctor_form %}
-        <p>
-            {{ field.label_tag }}<br>
-            {{ field }}
-            {% if field.help_text %}
-                <small style="color: grey">{{ field.help_text }}</small>
-            {% endif %}
-            {% for error in field.errors %}
-                <p style="color: red">{{ error }}</p>
-            {% endfor %}
-        </p>
-    {% endfor %}
-    <button type="submit">Save changes</button>
-</form>
-{% endblock %}
+                {% endif %}-->

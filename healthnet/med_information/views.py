@@ -11,6 +11,21 @@ from users.models.person import Doctor, Patient
 
 @permission_required('users.create_med_info')
 @login_required
+def viewMedical(request, patientid=None):
+    if request.method == 'GET':
+        if patientid is not None:
+            patient = Patient.objects.get(id=patientid)
+        else:
+            if request.user.person.is_patient:
+                patient = request.user.person.patient
+            else:
+                redirect('home')
+        records = Record.objects.filter(patient=patient)
+        results = Result.objects.filter(patient=patient)
+        prescriptions = Prescription.objects.filter(patient=patient)
+        return render(request, 'med_information/medical_info.html', {'patient':patient, 'records':records, 'results':results, 'prescriptions':prescriptions})
+
+@login_required
 @transaction.atomic
 def createPrescription(request, patientid=None):
     if request.method == 'POST':
@@ -35,7 +50,10 @@ def createPrescription(request, patientid=None):
         prescription_form = PrescriptionForm()
         if patientid is not None:
             del prescription_form.fields['patient']
-        return render(request, 'med_information/prescription.html', {'PrescriptionForm':prescription_form})
+            pname = Patient.objects.get(id=patientid)
+        else:
+            pname = None
+        return render(request, 'med_information/prescription.html', {'PrescriptionForm':prescription_form, 'patient_name': pname})
 
 
 @permission_required('users.update_med_info')
@@ -77,7 +95,7 @@ def viewPrescription(request, patientid=None):
 
     prescriptions = Prescription.objects.filter(patient=patient)
 
-    return render(request, 'med_information/viewPrescriptions.html', {'prescriptions':prescriptions, 'patient':patient})
+    return render(request, 'med_information/medical_info.html', {'prescriptions':prescriptions, 'patient':patient})
 
 
 @permission_required('users.create_med_info')
@@ -147,7 +165,7 @@ def viewTestResult(request, patientid=None):
 
     results = Result.objects.filter(patient=patient)
 
-    return render(request, 'med_information/viewResults.html', {'results':results, 'patient':patient})
+    return render(request, 'med_information/medical_info.html', {'results':results, 'patient':patient})
 
 
 @permission_required('users.create_med_info')
@@ -193,7 +211,7 @@ def viewRecord(request, patientid=None):
 
     records = Record.objects.filter(patient=patient)
 
-    return render(request, 'med_information/viewRecords.html', {'records': records, 'patient': patient})
+    return render(request, 'med_information/medical_info.html', {'records': records, 'patient': patient})
 
 
 @permission_required('users.update_med_info')
