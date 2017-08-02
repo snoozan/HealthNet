@@ -34,7 +34,10 @@ def createPrescription(request, patientid=None):
         prescription_form = PrescriptionForm()
         if patientid is not None:
             del prescription_form.fields['patient']
-        return render(request, 'med_information/prescription.html', {'PrescriptionForm':prescription_form})
+            pname = Patient.objects.get(id=patientid)
+        else:
+            pname = None
+        return render(request, 'med_information/prescription.html', {'PrescriptionForm':prescription_form, 'patient_name': pname})
 
 @login_required
 @transaction.atomic

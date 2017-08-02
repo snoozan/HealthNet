@@ -16,6 +16,9 @@
                         {%  endfor %}
                     </select>
                 {% endif %}
+            {% elif field.label == 'Specialty field'%}
+                {{field.as_text}}
+
             {% else %}
                 {{ field.as_text }}
             {% endif %}

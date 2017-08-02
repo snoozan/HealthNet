@@ -16,7 +16,7 @@
 </head>
 
 <h2>
-    Prescriptions for {{patient.name}}
+    {{patient.name}}'s prescriptions
 </h2>
 
 <table>
@@ -35,6 +35,11 @@
         <td><input type="button" onclick="location.href='{% url 'update_prescription' prescriptionid=p.id %}';" value="edit" /></td>
     </tr>
     {% endfor %}
+    {% if prescriptions|length == 0 %}
+    <tr>
+        <td colspan="5">No prescriptions</td>
+    </tr>
+    {% endif %}
 </table>
 
 {% endblock %}

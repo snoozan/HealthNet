@@ -61,7 +61,7 @@ class PersonForm(ModelForm):
         fields = '__all__'
 
 class Patient(Person):
-    dob = DateField(initial=datetime.date.today)
+    dob = models.DateField(default=datetime.date.today)
     admitted = models.BooleanField(default=False)
 
     class Meta:
@@ -73,7 +73,7 @@ class Patient(Person):
 class PatientForm(ModelForm):
     class Meta:
         model = Patient
-        fields = ('name', 'hospital')
+        fields = ('name', 'hospital', 'dob')
 
 class SignupForm(UserCreationForm):
 
