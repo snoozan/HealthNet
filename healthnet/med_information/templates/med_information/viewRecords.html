@@ -1,0 +1,51 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+<head>
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 90%;
+    }
+    td, th {
+        border: 1px solid #000000;
+        text-align: center;
+    }
+</style>
+</head>
+
+<h2>
+    Records for {{patient.name}}
+</h2>
+
+<table>
+    <th>Start Date</th>
+    <th>End Date</th>
+    <th>Height</th>
+    <th>Weight</th>
+    <th>Blood Pressure</th>
+    <th>Heart Rate</th>
+    <th>Breath Rate</th>
+    <th>Reason</th>
+    <th>Description</th>
+
+
+    {% for r in records %}
+    <tr>
+        <td>{{r.startDate}}</td>
+        <td>{{r.endDate}}</td>
+        <td>{{r.height}}</td>
+        <td>{{r.weight}}</td>
+        <td>{{r.blood_pressure}}</td>
+        <td>{{r.respirations_minute}}</td>
+        <td>{{r.breath_rate}}</td>
+        <td>{{r.reason}}</td>
+        <td>{{r.description}}</td>
+
+        <td><input type="button" onclick="location.href='{% url 'update_record' recordid=r.id %}';" value="edit" /></td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
