@@ -102,4 +102,12 @@ class Migration(migrations.Migration):
             name='nurse',
             options={'permissions': (('admit', 'Admit patient'),)},
         ),
+        migrations.AlterModelOptions(
+            name='doctor',
+            options={'permissions': (('admit', 'Admit patient'), ('release', 'Release patient'), ('view_cal', 'View patient calendar'), ('create_med_info', 'create med info'), ('update_med_info', 'update med info'), ('view_med_info', 'view med info'))},
+        ),
+        migrations.AlterModelOptions(
+            name='patient',
+            options={'permissions': (('update_patient', 'Signup as a user'), ('update', 'Signup as a user'), ('view_med_info', 'view med info'))},
+        ),
     ]

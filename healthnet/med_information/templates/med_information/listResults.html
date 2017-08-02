@@ -28,7 +28,7 @@
     {% if results|length == 0 %}
     <tr>
         <td colspan="5">No Test Results
-        {% if request.user.person.is_patient %}
+        {% if not request.user.person.is_patient %}
         <input type="button" onclick="location.href='{% url 'create_result' patientid=patient.id %}';" value="add" /></td>
         {% endif %}
         </td>
@@ -37,4 +37,7 @@
 </table>
 
 {% endblock %}
+<<<<<<< HEAD
 
+=======
+>>>>>>> a2149120f8e45032f619e7dc5b84eb8f770d3bee
