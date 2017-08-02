@@ -40,21 +40,15 @@ def user_logged_out_callback(sender, request, user, **kwargs):
 
 # Create your views here.
 @login_required
-def home(request):
+def home(request, userid=None):
     if request.user.person.is_patient:
-        if not request.user.person.patient.name:
+        if not request.user.person.patient.name or not request.user.person.hospital:
             return redirect("update_patient")
-    if request.user.person.is_doctor:
-        profile_form = DoctorForm(instance=request.user.person)
-    elif request.user.person.is_nurse:
-        profile_form = NurseForm(instance=request.user.person)
-    elif request.user.person.is_admin:
-        profile_form = AdminForm(instance=request.user.person)
-    else:
-        profile_form = PatientForm(instance=request.user.person)
+
+    profile = request.user.person
 
     return render(request, 'users/home.html', {
-        'profile_form': profile_form,
+        'profile': profile,
     })
 
 
@@ -63,19 +57,23 @@ def home(request):
 @transaction.atomic
 def update_profile(request):
     if request.method == 'POST':
-        patient_form = PatientForm(request.POST, instance=request.user.person)
+        patient_form = PatientForm(request.POST)
         if patient_form.is_valid():
-            patient_form.save()
+            request.user.person.patient.name = patient_form.cleaned_data['name']
+            request.user.person.patient.dob = patient_form.cleaned_data['dob']
+            if request.user.person.patient.hospital is None:
+                request.user.person.patient.hospital = patient_form.cleaned_data['hospital']
+            request.user.person.patient.save()
+
             messages.success(request, 'Your profile was successfully updated!')
             return redirect('home')
         else:
             messages.error(request, 'Please correct the error below.')
     else:
-        patient_form = PatientForm(instance=request.user.person)
-        hospitals = Hospital.objects.all()
+        patient_form = PatientForm(instance=request.user.person.patient)
+
     return render(request, 'users/profile.html', {
         'patient_form': patient_form,
-        'hospitals': hospitals
     })
 
 

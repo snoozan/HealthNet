@@ -6,12 +6,37 @@
     margin-right: auto;
 }
 .patienttable td, th {
-    border: 1px solid #000000;
     text-align: center;
 }
 .navcustom{
-    padding: 15px;
-    margin-bottom: 100px;
-    color: white;
-    background: black;
+    padding: 10px;
+    margin-bottom: 50px;
+    background: #3e3e3d;
+}
+.centernav{
+    padding: 10px;
+    margin-bottom: auto;
+    margin-top: auto;
+    border-radius: 10px;
+}
+.gotop{
+    margin-top:-25px;
+    height: 15px;
+}
+.centerdiv{
+    margin-left: auto;
+    margin-right: auto;
+}
+.formsize{
+    width: 25%;
+}
+.createsize{
+    width: 60%;
+}
+.createsize ul{
+    list-style: none;
+    text-align: left;
+}
+.recordsize{
+    width: 30%;
 }
