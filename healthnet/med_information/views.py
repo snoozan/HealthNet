@@ -189,10 +189,11 @@ def viewRecord(request, patientid=None):
 def updateRecord(request, recordid):
     if request.method == 'POST':
         record_form = RecordForm(request.POST)
-        del record_form.fields['patient', 'startDate']
+        del record_form.fields['patient']
+        del record_form.fields['startDate']
 
         if record_form.is_valid():
-            record = Result.objects.get(id=recordid)
+            record = Record.objects.get(id=recordid)
             if request.user.person.is_doctor:
                 record.endDate = record_form.cleaned_data['endDate']
                 record.height = record_form.cleaned_data['height']
@@ -204,12 +205,13 @@ def updateRecord(request, recordid):
                 record.description = record_form.cleaned_data['description']
                 record.save()
                 messages.success(request, "Record Updated!")
-                return redirect('view_result', recordid=record.patient.id)
+                return redirect('view_record', patientid=record.patient.id)
         else:
             print('Form not valid')
     else:
-        record_form = RecordForm(instance=Result.objects.get(id=recordid))
-        del record_form.fields['patient', 'startDate']
+        record_form = RecordForm(instance=Record.objects.get(id=recordid))
+        del record_form.fields['patient']
+        del record_form.fields['startDate']
 
     return render(request, 'med_information/record.html', {'RecordForm':record_form, 'recordid':recordid})
 
