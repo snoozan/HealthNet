@@ -20,8 +20,9 @@
         <td><form method="post"><input type="text" name="id" value="{{ patient.id }}" hidden>
             {% csrf_token %}
             <button type="submit">Discharge</button></form></td>
-        <td><input type="button" onclick="location.href='';" value="Edit" /></td>
-        <td><input type="button" onclick="location.href='';" value="View" /></td>
+        <td><input type="button" onclick="location.href='{% url 'view_record' patientid=patient.id %}';" value="View" /></td>
+        <td><input type="button" onclick="location.href='{% url 'view_result' patientid=patient.id %}';" value="View" />
+            <input type="button" onclick="location.href='{% url 'create_result' patientid=patient.id %}';" value="Add" /></td>
         <td><input type="button" onclick="location.href='{% url 'view_prescription' patientid=patient.id %}';" value="View" />
         <input type="button" onclick="location.href='{% url 'create_prescription' patientid=patient.id %}';" value="Add" /></td>
     </tr>
@@ -32,9 +33,10 @@
         <td>{{patient.name}}</td>
         <td><form method="post"><input type="text" name="id" value="{{ patient.id }}" hidden>
             {% csrf_token %}
-            <button type="submit">Admit</button></form></td>
-        <td><input type="button" onclick="location.href='';" value="View" /></td>
-        <td><input type="button" onclick="location.href='';" value="View" /></td>
+            <button type="submit" >Admit</button></form></td>
+        <td><input type="button" onclick="location.href='{% url 'view_record' patientid=patient.id %}';" value="View" /></td>
+        <td><input type="button" onclick="location.href='{% url 'view_result' patientid=patient.id %}';" value="View" />
+        <input type="button" onclick="location.href='{% url 'create_result' patientid=patient.id %}';" value="Add" /></td>
         <td><input type="button" onclick="location.href='{% url 'view_prescription' patientid=patient.id %}';" value="View" />
         <input type="button" onclick="location.href='{% url 'create_prescription' patientid=patient.id %}';" value="Add" /></td>
     </tr>
