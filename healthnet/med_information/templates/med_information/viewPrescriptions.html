@@ -37,7 +37,8 @@
     {% endfor %}
     {% if prescriptions|length == 0 %}
     <tr>
-        <td colspan="5">No prescriptions</td>
+        <td colspan="5">No prescriptions
+        <input type="button" onclick="location.href='{% url 'create_prescription' patientid=patient.id %}';" value="add" /></td></td>
     </tr>
     {% endif %}
 </table>

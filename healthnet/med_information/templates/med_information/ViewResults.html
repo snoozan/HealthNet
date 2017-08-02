@@ -24,6 +24,7 @@
     <th>Title</th>
     <th>Comments</th>
     <th>Released</th>
+    <th></th>
 
     {% for r in results %}
     <tr>
@@ -31,8 +32,16 @@
         <td>{{r.title}}</td>
         <td>{{r.comments}}</td>
         <td>{{r.released}}</td>
+        <td><input type="button" onclick="location.href='{% url 'update_result' resultid=r.id %}';" value="edit" /></td>
     </tr>
     {% endfor %}
+    {% if results|length == 0 %}
+    <tr>
+        <td colspan="5">No Test Results
+        <input type="button" onclick="location.href='{% url 'create_result' patientid=patient.id %}';" value="add" /></td>
+        </td>
+    </tr>
+    {% endif %}
 </table>
 
 {% endblock %}

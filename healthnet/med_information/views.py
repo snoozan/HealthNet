@@ -144,7 +144,7 @@ def viewTestResult(request, patientid=None):
 
     results = Result.objects.filter(patient=patient)
 
-    return render(request, 'med_information/viewResults.html', {'results':results, 'patient':patient})
+    return render(request, 'med_information/ViewResults.html', {'results':results, 'patient':patient})
 
 
 @login_required
