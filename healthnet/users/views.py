@@ -213,6 +213,13 @@ def create_nurse(request):
                 content_type=content_type,
             )
             nurse.user.user_permissions.add(permission.id)
+            content_type = ContentType.objects.get_for_model('Doctor')
+            permission = Permission.objects.get(
+                codename='view_med_info',
+                content_type=content_type,
+            )
+            nurse.user.user_permissions.add(permission.id)
+
             nurse.save()
             messages.success(request, 'Your profile was successfully updated!')
             return redirect('update')
@@ -260,6 +267,25 @@ def create_doctor(request):
                 content_type=content_type,
             )
             doctor.user.user_permissions.add(permission.id)
+            content_type = ContentType.objects.get_for_model('Doctor')
+            permission = Permission.objects.get(
+                codename='create_med_info',
+                content_type=content_type,
+            )
+            doctor.user.user_permissions.add(permission.id)
+            content_type = ContentType.objects.get_for_model('Doctor')
+            permission = Permission.objects.get(
+                codename='update_med_info',
+                content_type=content_type,
+            )
+            doctor.user.user_permissions.add(permission.id)
+            content_type = ContentType.objects.get_for_model('Doctor')
+            permission = Permission.objects.get(
+                codename='view_med_info',
+                content_type=content_type,
+            )
+            doctor.user.user_permissions.add(permission.id)
+
             doctor.save()
             messages.success(request, 'Your profile was successfully updated!')
             return redirect('update')

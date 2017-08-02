@@ -5,7 +5,7 @@ from users.models.person import Patient, Doctor
 
 
 class Record(models.Model):
-    startDate = models.DateField(default=timezone.now, null=True)
+    startDate = models.DateField(auto_now_add=True, null=True)
 
     endDate = models.DateField(null=True)
 
@@ -32,5 +32,5 @@ class RecordForm(ModelForm):
 
     class Meta:
         model = Record
-        fields = ('startDate', 'endDate', 'patient', 'height', 'weight', 'blood_pressure', 'heart_rate',
+        fields = ('endDate', 'patient', 'height', 'weight', 'blood_pressure', 'heart_rate',
                   'respirations_minute', 'reason', 'description')

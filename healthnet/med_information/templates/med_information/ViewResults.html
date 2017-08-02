@@ -26,12 +26,20 @@
     <th>Released</th>
 
     {% for r in results %}
+        {% if r.released or request.user.person.is_doctor %}
     <tr>
         <td>{{r.test_date}}</td>
         <td>{{r.title}}</td>
         <td>{{r.comments}}</td>
         <td>{{r.released}}</td>
     </tr>
+        {% if not r.released %}
+    <tr>
+        <td>{{r.test_date}}</td>
+        <td>{{r.title}}</td>
+        <td>{{r.released}}</td>
+    </tr>
+
     {% endfor %}
 </table>
 
