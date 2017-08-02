@@ -71,6 +71,7 @@
     {% endif %}
     {% if user.person.is_patient %}
         <li><a class="navbar-brand" href="{% url 'update_patient' %}"><h4>Update Profile</h4></a></li>
+        <li><a class="navbar-brand" href="{% url 'view_medical' %}"><h4>Medical Information</h4></a></li>
     {% endif %}
       </ul>
       </div>

@@ -1,5 +1,4 @@
-{% extends 'users/base.html' %}
-
+{% if prescriptions %}
 {% block content %}
 <head>
 <style>
@@ -16,7 +15,7 @@
 </head>
 
 <h2>
-    {{patient.name}}'s prescriptions
+    Prescriptions
 </h2>
 
 <table>
@@ -32,15 +31,20 @@
         <td>{{p.startDate}}</td>
         <td>{{p.duration}}</td>
         <td>{{p.instructions}}</td>
+        {% if request.user.person.is_doctor %}
         <td><input type="button" onclick="location.href='{% url 'update_prescription' prescriptionid=p.id %}';" value="edit" /></td>
+        {% endif %}
     </tr>
     {% endfor %}
     {% if prescriptions|length == 0 %}
     <tr>
         <td colspan="5">No prescriptions
+        {% if request.user.person.is_patient %}
         <input type="button" onclick="location.href='{% url 'create_prescription' patientid=patient.id %}';" value="add" /></td></td>
+        {% endif %}
     </tr>
     {% endif %}
 </table>
 
 {% endblock %}
+{% endif %}

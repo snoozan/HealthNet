@@ -1,5 +1,4 @@
-{% extends 'users/base.html' %}
-
+{% if records %}
 {% block content %}
 <head>
 <style>
@@ -16,7 +15,7 @@
 </head>
 
 <h2>
-    Records for {{patient.name}}
+    Records
 </h2>
 
 <table>
@@ -29,7 +28,7 @@
     <th>Breath Rate</th>
     <th>Reason</th>
     <th>Description</th>
-
+    <th></th>
 
     {% for r in records %}
     <tr>
@@ -42,10 +41,20 @@
         <td>{{r.respirations_minute}}</td>
         <td>{{r.reason}}</td>
         <td>{{r.description}}</td>
-
+        {% if request.user.person.is_doctor %}
         <td><input type="button" onclick="location.href='{% url 'update_record' recordid=r.id %}';" value="edit" /></td>
+        {% endif %}
     </tr>
     {% endfor %}
+    {% if records|length == 0 %}
+    <tr>
+        <td colspan="10">No records
+        {% if request.user.person.is_patient %}
+        <input type="button" onclick="location.href='{% url 'create_record' patientid=patient.id %}';" value="add" /></td></td>
+        {% endif %}
+    </tr>
+    {% endif %}
 </table>
 
 {% endblock %}
+{% endif %}
