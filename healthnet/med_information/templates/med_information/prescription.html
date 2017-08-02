@@ -24,7 +24,7 @@
 <form method="post" >
   {% csrf_token %}
     {% for field in PrescriptionForm %}
-        <div class="formcontrol text-left centerdiv formsize">{{ field.name}}: {{ field }}</div><br/>
+        <div class="text-left centerdiv formsize">{{ field.name}}: {{ field }}</div><br/>
     {% if prescriptionid %}
         <input type='text' name='prescriptionid' value="{{prescriptionid}}" hidden>
     {% endif %}
