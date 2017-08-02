@@ -7,7 +7,7 @@ from users.models.person import Patient, Doctor
 class Record(models.Model):
     startDate = models.DateField(default=timezone.now, null=True)
 
-    endDate = models.DateField(default=timezone.now, null=True)
+    endDate = models.DateField(null=True)
 
     height = models.CharField(max_length=1000, null=True)
 
