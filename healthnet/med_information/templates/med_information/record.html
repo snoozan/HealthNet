@@ -24,7 +24,7 @@
 <form method="post" >
   {% csrf_token %}
 {% for field in RecordForm %}
-    <div class="text-left centerdiv recordsize">{{ field.name}}: {{ field }}</div><br/>
+    <div class="text-left centerdiv recordsize">{{ field.label_tag}} {{ field }}</div><br/>
 {% endfor %}
 <button type="submit">Submit</button>
 </form>
