@@ -5,7 +5,7 @@
     Patients of {{hospital.name}}
 </h2>
 
-<table class="patienttable text-center">
+<table class="table table-bordered text-center">
     <tr>
         <th>Name</th>
         <th>Admitted?</th>
@@ -39,7 +39,7 @@
         <input type="button" onclick="location.href='{% url 'create_result' patientid=patient.id %}';" value="Add" /></td>
         <td><input type="button" onclick="location.href='{% url 'view_prescription' patientid=patient.id %}';" value="View" />
         <input type="button" onclick="location.href='{% url 'create_prescription' patientid=patient.id %}';" value="Add" /></td>
-    </tr>
+    </tr style='background-color: #dddddd;' >
     {% endfor %}
 
 </table>
