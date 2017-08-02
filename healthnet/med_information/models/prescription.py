@@ -9,7 +9,7 @@ class Prescription(models.Model):
 
     title = models.CharField(max_length=1000)
 
-    startDate = models.DateField(timezone.now(), null=True)
+    startDate = models.DateField(default=timezone.now(), null=True)
 
     duration = models.DurationField(default="1 week")
 
