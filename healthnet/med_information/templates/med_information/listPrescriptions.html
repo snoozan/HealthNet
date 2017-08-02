@@ -1,29 +1,16 @@
 {% if prescriptions %}
 {% block content %}
-<head>
-<style>
-    table {
-        font-family: arial, sans-serif;
-        border-collapse: collapse;
-        width: 90%;
-    }
-    td, th {
-        border: 1px solid #000000;
-        text-align: center;
-    }
-</style>
-</head>
 
 <h2>
     Prescriptions
 </h2>
 
-<table>
+<table class="table table-bordered text-center">
     <th>Title</th>
     <th>Started on</th>
     <th>Duration</th>
     <th>Instructions</th>
-    <th></th>
+    <th>Edit</th>
 
     {% for p in prescriptions %}
     <tr>
