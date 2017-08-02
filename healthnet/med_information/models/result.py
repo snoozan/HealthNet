@@ -12,13 +12,13 @@ class Result(models.Model):
     comments = models.CharField(max_length=100)
     released = models.BooleanField(default=False)
 
-    def __str__(self):
-        return self.title
+    #def __str__(self):
+        #return self.title
 
 
 class ResultForm(ModelForm):
     # FIXME filter by hospital
-    patient = ModelChoiceField(queryset=Patient.objects.all())
+    #patient = ModelChoiceField(queryset=Patient.objects.all())
 
     class Meta:
         model = Result
