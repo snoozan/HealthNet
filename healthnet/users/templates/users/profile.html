@@ -6,21 +6,15 @@
         <p>
             {{ field.label_tag }}
             {% if field.label == 'Hospital' %}
-                {% if request.user.person.hospital.name %}
-                    {{ request.user.person.hospital.name }}
-                {%  else %}
-                    <label for="id_hospital">Apply to:</label>
-                    <select name="hospital" id="id_hospital">
-                        {% for hospital in hospitals %}
-                            <option value={{ hospital.id }}>{{ hospital.name }}</option>
-                        {%  endfor %}
-                    </select>
+                {% if request.user.person.hospital %}
+                    {{request.user.person.hospital.name}}
+                {% else %}
+                    {{field}}
                 {% endif %}
-            {% elif field.label == 'Specialty field'%}
-                {{field.as_text}}
 
             {% else %}
-                {{ field.as_text }}
+                {{ field }}
+
             {% endif %}
             {% if field.help_text %}
                 <small style="color: grey">{{ field.help_text }}</small>
@@ -48,3 +42,14 @@
     <button type="submit">Save changes</button>
 </form>
 {% endblock %}
+
+<!--{% if request.user.person.hospital.name %}
+                    {{ request.user.person.hospital.name }}
+                {%  else %}
+                    <label for="id_hospital">Apply to:</label>
+                    <select name="hospital" id="id_hospital">
+                        {% for hospital in hospitals %}
+                            <option value={{ hospital.id }}>{{ hospital.name }}</option>
+                        {%  endfor %}
+                    </select>
+                {% endif %}-->

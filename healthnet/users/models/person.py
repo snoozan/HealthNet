@@ -4,7 +4,7 @@ from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.forms import ModelForm, DateField, Widget
+from django.forms import ModelForm, DateField, Widget, ModelChoiceField
 import datetime
 from .hospital import Hospital
 
@@ -61,7 +61,7 @@ class PersonForm(ModelForm):
         fields = '__all__'
 
 class Patient(Person):
-    dob = models.DateField(default=datetime.date.today)
+    dob = models.DateField(default=datetime.date.today, null=True)
     admitted = models.BooleanField(default=False)
 
     class Meta:
@@ -71,6 +71,7 @@ class Patient(Person):
         )
 
 class PatientForm(ModelForm):
+    hospital = ModelChoiceField(required=False, queryset=Hospital.objects.all())
     class Meta:
         model = Patient
         fields = ('name', 'hospital', 'dob')
