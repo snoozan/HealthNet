@@ -9,6 +9,7 @@ from .models.record import Record, RecordForm
 from users.models.person import Doctor, Patient
 
 
+@permission_required('users.create_med_info')
 @login_required
 def viewMedical(request, patientid=None):
     if request.method == 'GET':
@@ -54,6 +55,8 @@ def createPrescription(request, patientid=None):
             pname = None
         return render(request, 'med_information/prescription.html', {'PrescriptionForm':prescription_form, 'patient_name': pname})
 
+
+@permission_required('users.update_med_info')
 @login_required
 @transaction.atomic
 def updatePrescription(request, prescriptionid):
@@ -81,7 +84,7 @@ def updatePrescription(request, prescriptionid):
     return render(request, 'med_information/prescription.html', {'PrescriptionForm':prescription_form, 'prescriptionid':prescriptionid})
 
 
-
+@permission_required('users.view_med_info')
 @login_required
 @transaction.atomic
 def viewPrescription(request, patientid=None):
@@ -95,6 +98,7 @@ def viewPrescription(request, patientid=None):
     return render(request, 'med_information/medical_info.html', {'prescriptions':prescriptions, 'patient':patient})
 
 
+@permission_required('users.create_med_info')
 @login_required
 @transaction.atomic
 def createTestResult(request, patientid=None):
@@ -124,6 +128,7 @@ def createTestResult(request, patientid=None):
         return render(request, 'med_information/result.html', {'ResultForm':result_form})
 
 
+@permission_required('users.update_med_info')
 @login_required
 @transaction.atomic
 def updateTestResult(request, resultid):
@@ -149,6 +154,7 @@ def updateTestResult(request, resultid):
     return render(request, 'med_information/result.html', {'ResultForm':result_form, 'resultid':resultid})
 
 
+@permission_required('users.view_med_info')
 @login_required
 @transaction.atomic
 def viewTestResult(request, patientid=None):
@@ -162,6 +168,7 @@ def viewTestResult(request, patientid=None):
     return render(request, 'med_information/medical_info.html', {'results':results, 'patient':patient})
 
 
+@permission_required('users.create_med_info')
 @login_required
 @transaction.atomic
 def createRecord(request, patientid=None):
@@ -175,11 +182,14 @@ def createRecord(request, patientid=None):
                 record.doctor = Doctor.objects.get(id=request.user.person.id)
             if patientid is not None:
                 record.patient = Patient.objects.get(id=patientid)
+                record.patient.admitted = True
+                record.patient.save()
             else:
                 print('patient id doesnt exist')
             record.save()
         else:
             print('Form is not valid')
+
         return redirect('view_record', patientid=patientid)
 
     else:
@@ -189,6 +199,8 @@ def createRecord(request, patientid=None):
 
         return render(request, 'med_information/record.html', {'RecordForm':record_form})
 
+
+@permission_required('users.view_med_info')
 @login_required
 @transaction.atomic
 def viewRecord(request, patientid=None):
@@ -202,13 +214,13 @@ def viewRecord(request, patientid=None):
     return render(request, 'med_information/medical_info.html', {'records': records, 'patient': patient})
 
 
+@permission_required('users.update_med_info')
 @login_required
 @transaction.atomic
 def updateRecord(request, recordid):
     if request.method == 'POST':
         record_form = RecordForm(request.POST)
         del record_form.fields['patient']
-        del record_form.fields['startDate']
 
         if record_form.is_valid():
             record = Record.objects.get(id=recordid)
@@ -229,7 +241,6 @@ def updateRecord(request, recordid):
     else:
         record_form = RecordForm(instance=Record.objects.get(id=recordid))
         del record_form.fields['patient']
-        del record_form.fields['startDate']
 
     return render(request, 'med_information/record.html', {'RecordForm':record_form, 'recordid':recordid})
 
