@@ -1,30 +1,15 @@
-{% extends 'users/base.html' %}
-
 {% block content %}
-<head>
-<style>
-    table {
-        font-family: arial, sans-serif;
-        border-collapse: collapse;
-        width: 90%;
-    }
-    td, th {
-        border: 1px solid #000000;
-        text-align: center;
-    }
-</style>
-</head>
 
 <h2>
-    Prescriptions for {{patient.name}}
+    Prescriptions
 </h2>
 
-<table>
+<table class="table table-bordered text-center">
     <th>Title</th>
     <th>Started on</th>
     <th>Duration</th>
     <th>Instructions</th>
-    <th></th>
+    <th>Edit</th>
 
     {% for p in prescriptions %}
     <tr>
@@ -32,9 +17,19 @@
         <td>{{p.startDate}}</td>
         <td>{{p.duration}}</td>
         <td>{{p.instructions}}</td>
+        {% if request.user.person.is_doctor %}
         <td><input type="button" onclick="location.href='{% url 'update_prescription' prescriptionid=p.id %}';" value="edit" /></td>
+        {% endif %}
     </tr>
     {% endfor %}
+    {% if prescriptions|length == 0 %}
+    <tr>
+        <td colspan="5">No prescriptions
+        {% if not request.user.person.is_patient %}
+        <input type="button" onclick="location.href='{% url 'create_prescription' patientid=patient.id %}';" value="add" /></td></td>
+        {% endif %}
+    </tr>
+    {% endif %}
 </table>
 
 {% endblock %}

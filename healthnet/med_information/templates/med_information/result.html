@@ -3,7 +3,7 @@
 <form method="post" >
   {% csrf_token %}
 {% for field in ResultForm %}
-    {{ field.name}}: {{ field }}<br/>
+    <div class="text-left centerdiv formsize">{{ field.label_tag}} {{ field }}</div><br/>
 {% endfor %}
 <button type="submit">Submit</button>
 </form>

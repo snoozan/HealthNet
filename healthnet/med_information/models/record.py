@@ -1,14 +1,13 @@
 from django.db import models
 from django.utils import timezone
+from django.forms import ModelForm, ModelChoiceField
 from users.models.person import Patient, Doctor
-from users.models.hospital import Hospital
-from django.forms import ModelForm, DateField, Widget, ModelChoiceField
 
 
 class Record(models.Model):
-    startDate = models.DateField(default=timezone.now, null=True)
+    startDate = models.DateField(auto_now_add=True, null=True)
 
-    endDate = models.DateField(default=timezone.now, null=True)
+    endDate = models.DateField(null=True)
 
     height = models.CharField(max_length=1000, null=True)
 
@@ -29,9 +28,9 @@ class Record(models.Model):
 
 
 class RecordForm(ModelForm):
-    patient = ModelChoiceField(queryset=Patient.objects.all())
+    #patient = ModelChoiceField(queryset=Patient.objects.all())
 
     class Meta:
         model = Record
-        fields = ('patient', 'startDate', 'endDate', 'height', 'weight', 'blood_pressure', 'heart_rate',
+        fields = ('endDate', 'patient', 'height', 'weight', 'blood_pressure', 'heart_rate',
                   'respirations_minute', 'reason', 'description')

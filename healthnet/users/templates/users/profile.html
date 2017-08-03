@@ -1,3 +1,24 @@
+<head>
+    <link rel="stylesheet" href="https://formden.com/static/cdn/bootstrap-iso.css" />
+    <link rel="stylesheet" href="https://formden.com/static/cdn/font-awesome/4.4.0/css/font-awesome.min.css" />
+    <style>.bootstrap-iso .formden_header h2, .bootstrap-iso .formden_header p, .bootstrap-iso form{font-family: Arial, Helvetica, sans-serif; color: black}.bootstrap-iso form button, .bootstrap-iso form button:hover{color: white !important;} .asteriskField{color: red;}</style>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+
+    <script>
+        $(document).ready(function(){
+            var date_input=$('input[name="dob"]'); //our date input has the name "date"
+            var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+            date_input.datepicker({
+                format: 'yyyy-mm-dd',
+                container: container,
+                todayHighlight: true,
+                autoclose: true,
+            })
+        })
+    </script>
+</head>
 {% extends 'users/base.html' %}
 {% block content %}
 <form method="post">
@@ -6,7 +27,52 @@
         <p>
             {{ field.label_tag }}
             {% if field.label == 'Hospital' %}
-                {% if request.user.person.hospital.name %}
+                {% if request.user.person.hospital %}
+                    {{request.user.person.hospital.name}}
+                {% else %}
+                    {{field}}
+                {% endif %}
+
+            {% else %}
+                {{ field }}
+
+            {% endif %}
+            {% if field.help_text %}
+                <small style="color: grey">{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+                <p style="color: red">{{ error }}</p>
+            {% endfor %}
+        </p>
+    {% endfor %}
+    <div class="text-left centerdiv createsize list-unstyle">
+        {{ account_form.as_p }}
+    </div>
+    <div class="text-left centerdiv formsize">
+        {{ nurse_form.as_p }}
+    </div>
+    <div class="text-left centerdiv formsize">
+        {{ admin_form.as_p }}
+    </div>
+    <div class="text-left centerdiv formsize list-unstyled">
+        {% for field in doctor_form %}
+            <p>
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}
+                <small style="color: grey">{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+                <p style="color: red">{{ error }}</p>
+            {% endfor %}
+            </p>
+    {% endfor %}
+    </div>
+    <button type="submit">Save changes</button>
+</form>
+{% endblock %}
+
+<!--{% if request.user.person.hospital.name %}
                     {{ request.user.person.hospital.name }}
                 {%  else %}
                     <label for="id_hospital">Apply to:</label>
@@ -15,33 +81,4 @@
                             <option value={{ hospital.id }}>{{ hospital.name }}</option>
                         {%  endfor %}
                     </select>
-                {% endif %}
-            {% else %}
-                {{ field.as_text }}
-            {% endif %}
-            {% if field.help_text %}
-                <small style="color: grey">{{ field.help_text }}</small>
-            {% endif %}
-            {% for error in field.errors %}
-                <p style="color: red">{{ error }}</p>
-            {% endfor %}
-        </p>
-    {% endfor %}
-    {{ nurse_form.as_p }}
-    {{ admin_form.as_p }}
-    {{ account_form.as_p }}
-    {% for field in doctor_form %}
-        <p>
-            {{ field.label_tag }}<br>
-            {{ field }}
-            {% if field.help_text %}
-                <small style="color: grey">{{ field.help_text }}</small>
-            {% endif %}
-            {% for error in field.errors %}
-                <p style="color: red">{{ error }}</p>
-            {% endfor %}
-        </p>
-    {% endfor %}
-    <button type="submit">Save changes</button>
-</form>
-{% endblock %}
+                {% endif %}-->

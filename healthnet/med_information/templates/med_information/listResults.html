@@ -1,0 +1,39 @@
+{% block content %}
+<h2>
+    Results
+</h2>
+
+<table class="table table-bordered text-center">
+    <th>Test Date</th>
+    <th>Title</th>
+    <th>Comments</th>
+    {% if not request.user.person.is_patient %}
+    <th>Released</th>
+    {% endif %}
+    <th></th>
+
+    {% for r in results %}
+    <tr>
+        <td>{{r.test_date}}</td>
+        <td>{{r.title}}</td>
+        <td>{{r.comments}}</td>
+        {% if not request.user.person.is_patient %}
+        <td>{{r.released}}</td>
+        {% endif %}
+        {% if request.user.person.is_doctor %}
+        <td><input type="button" onclick="location.href='{% url 'update_result' resultid=r.id %}';" value="edit" /></td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+    {% if results|length == 0 %}
+    <tr>
+        <td colspan="5">No Test Results
+        {% if not request.user.person.is_patient %}
+        <input type="button" onclick="location.href='{% url 'create_result' patientid=patient.id %}';" value="add" /></td>
+        {% endif %}
+        </td>
+    </tr>
+    {% endif %}
+</table>
+
+{% endblock %}

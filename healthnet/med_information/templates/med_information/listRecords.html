@@ -1,0 +1,45 @@
+{% block content %}
+
+<h2>
+    Records
+</h2>
+
+<table  class="table table-bordered text-center">
+    <th>Start Date</th>
+    <th>End Date</th>
+    <th>Height</th>
+    <th>Weight</th>
+    <th>Blood Pressure</th>
+    <th>Heart Rate</th>
+    <th>Breath Rate</th>
+    <th>Reason</th>
+    <th>Description</th>
+    <th></th>
+
+    {% for r in records %}
+    <tr>
+        <td>{{r.startDate}}</td>
+        <td>{{r.endDate}}</td>
+        <td>{{r.height}}</td>
+        <td>{{r.weight}}</td>
+        <td>{{r.blood_pressure}}</td>
+        <td>{{r.heart_rate}}</td>
+        <td>{{r.respirations_minute}}</td>
+        <td>{{r.reason}}</td>
+        <td>{{r.description}}</td>
+        {% if request.user.person.is_doctor %}
+        <td><input type="button" onclick="location.href='{% url 'update_record' recordid=r.id %}';" value="edit" /></td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+    {% if records|length == 0 %}
+    <tr>
+        <td colspan="10">No records
+        {% if not request.user.person.is_patient %}
+        <input type="button" onclick="location.href='{% url 'create_record' patientid=patient.id %}';" value="add" /></td></td>
+        {% endif %}
+    </tr>
+    {% endif %}
+</table>
+
+{% endblock %}

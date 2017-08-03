@@ -1,19 +1,10 @@
 {% extends 'users/base.html' %}
 {% block content %}
-{% for result in results %}
-{{result.title}}: created on: {{result.test_date}}
-<br/>
-{% endfor %}
-<br/>
-{% for prescription in prescriptions %}
-{{prescription.patient}}: prescribed by: {{prescription.doctor}}
-{{prescription.instructions}}
-<br/>
-{% endfor %}
-<br/>
-{% for record in records %}
-{{record.patient}}: prescribed by: {{record.doctor}}
-{{record.instructions}}
-<br/>
-{% endfor %}
+<h2>{{patient.name}}'s Medical History</h2>
+<br>
+{% include 'med_information/listPrescriptions.html' %}
+<br>
+{% include 'med_information/listRecords.html' %}
+<br>
+{% include 'med_information/listResults.html' %}
 {% endblock %}>

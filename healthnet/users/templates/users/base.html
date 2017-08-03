@@ -7,25 +7,7 @@
     <link href="{% static "css/bootstrap.css" %}" rel="stylesheet">
     <link href="{% static "datepicker/css/bootstrap-datepicker.css" %}" rel="stylesheet">
     <link href="{% static "css/custom.css" %}" rel="stylesheet">
-    <link rel="stylesheet" href="https://formden.com/static/cdn/bootstrap-iso.css" />
-    <link rel="stylesheet" href="https://formden.com/static/cdn/font-awesome/4.4.0/css/font-awesome.min.css" />
-    <style>.bootstrap-iso .formden_header h2, .bootstrap-iso .formden_header p, .bootstrap-iso form{font-family: Arial, Helvetica, sans-serif; color: black}.bootstrap-iso form button, .bootstrap-iso form button:hover{color: white !important;} .asteriskField{color: red;}</style>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
 
-    <script>
-        $(document).ready(function(){
-            var date_input=$('input[name="date"]'); //our date input has the name "date"
-            var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
-            date_input.datepicker({
-                format: 'yyyy-mm-dd',
-                container: container,
-                todayHighlight: true,
-                autoclose: true,
-            })
-        })
-    </script>
     <title>{% block title %}HealthNet{% endblock %}</title>
   </head>
   <body>
@@ -71,6 +53,7 @@
     {% endif %}
     {% if user.person.is_patient %}
         <li><a class="navbar-brand" href="{% url 'update_patient' %}"><h4>Update Profile</h4></a></li>
+        <li><a class="navbar-brand" href="{% url 'view_medical' %}"><h4>Medical Information</h4></a></li>
     {% endif %}
       </ul>
       </div>
