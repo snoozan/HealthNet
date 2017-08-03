@@ -29,10 +29,15 @@ class AppointmentForm(ModelForm):
     patient = ModelChoiceField(required=False, queryset=Patient.objects.all())
     doctor = ModelChoiceField(required=False, queryset=Doctor.objects.all())
 
-    def doesnt_collide(self):#Can collide with own appts different doctors
-        doc_appts = Appointment.objects.filter(doctor=self.cleaned_data['doctor'])
+    def doesnt_collide(self, patientid, doctorid):#Can collide with own appts different doctors
+        doc_appts = Appointment.objects.filter(doctor=doctorid)
+        own_appts = Appointment.objects.filter(patient=patientid)
+
         collision = False
         for appt in doc_appts:
+            if self.cleaned_data['time_hour'] == appt.time_hour and self.cleaned_data['time_min'] == appt.time_min and self.cleaned_data['date'] == appt.date:
+                collision = True
+        for appt in own_appts:
             if self.cleaned_data['time_hour'] == appt.time_hour and self.cleaned_data['time_min'] == appt.time_min and self.cleaned_data['date'] == appt.date:
                 collision = True
         return not collision
