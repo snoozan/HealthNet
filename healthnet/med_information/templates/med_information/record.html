@@ -29,6 +29,10 @@
         Inches
     {% elif field.name == 'weight' %}
         lbs
+    {% elif field.name == 'systolic_pressure' %}
+        mmHg
+    {% elif field.name == 'diastolic_pressure' %}
+        mmHg
     {% elif field.name == 'heart_rate' %}
         BPM
     {% elif field.name == 'respirations_minute' %}
