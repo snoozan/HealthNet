@@ -6,20 +6,20 @@
 <table class="table table-bordered text-center">
     <th>Test Date</th>
     <th>Title</th>
-    <th>Comments</th>
     {% if not request.user.person.is_patient %}
-    <th>Released</th>
+    <th>Comments</th>
     {% endif %}
+    <th>Released</th>
     <th></th>
 
     {% for r in results %}
     <tr>
         <td>{{r.test_date}}</td>
         <td>{{r.title}}</td>
-        <td>{{r.comments}}</td>
         {% if not request.user.person.is_patient %}
-        <td>{{r.released}}</td>
+        <td>{{r.comments}}</td>
         {% endif %}
+        <td>{{r.released}}</td>
         {% if request.user.person.is_doctor %}
         <td><input type="button" onclick="location.href='{% url 'update_result' resultid=r.id %}';" value="edit" /></td>
         {% endif %}
