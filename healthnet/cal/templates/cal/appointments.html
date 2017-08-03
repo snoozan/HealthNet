@@ -24,8 +24,8 @@
 <div class="form-group">
 <form method="post" >
   {% csrf_token %}
-{% for field in appointment_form.visible_fields %}
-    <div class="formcontrol text-left centerdiv formsize"> {{ field.label_tag}}: {{ field }}</div><br/>
+{% for field in appointment_form %}
+    <div class="formcontrol text-left centerdiv formsize"> {{ field.label_tag}} {{ field }}</div><br/>
 {% endfor %}
 <br/>
 {% if create %}
