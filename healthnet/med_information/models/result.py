@@ -9,7 +9,7 @@ class Result(models.Model):
     title = models.CharField(max_length=80)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, null=True)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
-    comments = models.CharField(max_length=100)
+    comments = models.TextField(max_length=1000)
     released = models.BooleanField(default=False)
 
     #def __str__(self):
