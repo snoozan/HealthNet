@@ -27,7 +27,11 @@
     Writing Prescription for {{patient_name}}
     </h2>{% endif %}
     {% for field in PrescriptionForm %}
-        <div class="text-left centerdiv formsize">{{ field.label_tag }} {{ field }}</div><br/>
+        <div class="text-left centerdiv formsize">{{ field.label_tag }} {{ field }}
+        {% if field.name == 'duration' %}
+            Days
+        {% endif %}
+        </div><br/>
     {% if prescriptionid %}
         <input type='text' name='prescriptionid' value="{{prescriptionid}}" hidden>
     {% endif %}

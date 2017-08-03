@@ -15,7 +15,7 @@
     <tr>
         <td>{{p.title}}</td>
         <td>{{p.startDate}}</td>
-        <td>{{p.duration}}</td>
+        <td>{{p.duration}} Days</td>
         <td>{{p.instructions}}</td>
         {% if request.user.person.is_doctor %}
         <td><input type="button" onclick="location.href='{% url 'update_prescription' prescriptionid=p.id %}';" value="edit" /></td>
