@@ -4,9 +4,8 @@
 {% if request.user.person.is_doctor %}
     <a class="navbar-brand" href="{% url 'create' patientid %}">Create Appointment</a><br/>
 {% elif pid %}
-    <a class="navbar-brand" href="{% url 'create' pid=pid %}">Create Appointment</a><br/>
+    <a class="navbar-brand" href="{% url 'create' pid %}">Create Appointment</a><br/>
 {% else %}
-
     <a href="{% url 'create' %}">Create Appointment</a><br/>
 {% endif %}
 <h3>

@@ -14,61 +14,54 @@ from django.db import models
 def view_calendar(request, pk=None):
     now = datetime.datetime.now()
     two_weeks = now + datetime.timedelta(weeks=1)
-    did=None
-    pid=None
+
     if pk is not None:
         if request.user.person.is_doctor:
             appointments = Appointment.objects.filter(patient=pk)
-            pid = pk
         elif request.user.person.is_nurse:
-            appointments = Appointment.objects.filter(pk, time__range=(now, two_weeks))
-            #cannot create appts....
+            appointments = Appointment.objects.filter(patient=pk, date__range=(now, two_weeks))
         elif request.user.person.is_patient:
-            appointments = Appointment.objects.filter(patient=pk, time__range=(now, two_weeks))
-            did = pk
+            appointments = Appointment.objects.filter(patient=pk, date__range=(now, two_weeks))
+        name = Patient.objects.get(person_ptr_id=pk).name
     else:
         if request.user.person.is_patient:
             appointments = Appointment.objects.filter(patient=request.user.person.id)
         elif request.user.person.is_doctor:
             appointments = Appointment.objects.filter(doctor=request.user.person.id)
         elif request.user.person.is_nurse:
-            appointments = Appointment.objects.all(hospital=request.user.person.hospital)#same day, TEST!
+            appointments = Appointment.objects.all(hospital=request.user.person.hospital, date__range=(now, two_weeks))
         else:
             appointments = None
+        name = None
 
-    if pid is not None:
-        name = Person.objects.get(id=pid).name
-    elif did is not None:
-        name = Person.objects.get(id=did).name
-    else:
-        name = ''
-    return render(request, 'cal/calendar.html', {'appointments':appointments, 'pid':pid, 'did':did, 'name':name})
+    return render(request, 'cal/calendar.html', {'appointments':appointments, 'name':name,'pid':pk})
 
 @login_required
 @transaction.atomic
-def create_appointment(request, pid=None, did=None):
+def create_appointment(request, pid=None):
     error=None
     if request.method == 'POST':
         appointment_form = AppointmentForm(request.POST)
         if appointment_form.is_valid():
-            if appointment_form.doesnt_collide():
-                #appointment = appointment_form.save()
-                a = Appointment.objects.get(id=request.POST['appointment_id'])
-                a.description = appointment_form.cleaned_data['description']
-                a.time_hour = appointment_form.cleaned_data['time_hour']
-                a.time_min = appointment_form.cleaned_data['time_min']
-                a.date = appointment_form.cleaned_data['date']
-                if a.doctor is None:
-                    a.doctor = appointment_form.cleaned_data['doctor']
-                if a.patient is None:
-                    a.patient = appointment_form.cleaned_data['patient']
-                a.save()
+
+            if request.user.person.is_patient:
+                patientid = request.user.person.id
+                doctorid  = appointment_form.cleaned_data['doctor'].id
+            else:
+                doctorid = request.user.person.id
+                patientid  = appointment_form.cleaned_data['patient'].id
+
+            if appointment_form.doesnt_collide(patientid, doctorid):
+                appointment = appointment_form.save()
+                appointment.doctor = Doctor.objects.get(id=doctorid)
+                appointment.patient = Patient.objects.get(id=patientid)
+
+                appointment.save()
 
                 messages.success(request, "Appointment Created!")
                 return redirect('calendar')
             else:
                 messages.error(request, 'Collision detected')
-                appointmentid=request.POST['appointment_id']
                 if request.user.person.is_patient:
                     del appointment_form.fields['patient']
                 elif request.user.person.is_doctor:
@@ -76,63 +69,45 @@ def create_appointment(request, pid=None, did=None):
                 error = "Try another time, either you already have an appointment or the doctor is busy at this time!"
     else:#if GET request
         appointment = Appointment.objects.create(hospital = request.user.person.hospital)
-        if pid is not None:
-            if request.user.person.is_doctor:
-                appointment.patient = Patient.objects.get(id = pid)
-                appointment.doctor = Doctor.objects.get(id = request.user.person.id)
-            elif request.user.person.is_nurse:
-                appointment.patient = Patient.objects.get(id = pid)
-            elif request.user.person.is_patient:#test
-                appointment.patient = Patient.objects.get(id = pid)
-        elif did is not None:
-            if request.user.person.is_doctor:
-                appointment.doctor = Doctor.objects.get(id = did)
-            elif request.user.person.is_nurse:
-                appointment.doctor = Doctor.objects.get(id = did)
-            elif request.user.person.is_patient:
-                appointment.doctor = Doctor.objects.get(id = did)
-                appointment.patient = Patient.objects.get(id = request.user.person.id)
-        else:
-            if request.user.person.is_patient:
-                print(request.user.person.__dict__)
-                appointment.patient = Patient.objects.get(id = request.user.person.id)
-            elif request.user.person.is_doctor:
-                appointment.doctor = Doctor.objects.get(id = request.user.person.id)
+        appointment_form = AppointmentForm()
 
-        appointment.save()
+#         if pid is not None:
+#             if request.user.person.is_doctor:
+#                 appointment.patient = Patient.objects.get(id = pid)
+#                 appointment.doctor = Doctor.objects.get(id = request.user.person.id)
 
-        appointment_form = AppointmentForm(instance=appointment)
-        appointmentid=appointment.id
+#             elif request.user.person.is_patient:#test
+#                 appointment.patient = Patient.objects.get(id = pid)
+
+#         else:
+#             if request.user.person.is_patient:
+#                 appointment.patient = Patient.objects.get(id = request.user.person.id)
+#             elif request.user.person.is_doctor:
+#                 appointment.doctor = Doctor.objects.get(id = request.user.person.id)
+
+        hospital = request.user.person.hospital
 
         if pid is not None:
             if request.user.person.is_doctor:
                 del appointment_form.fields['doctor']
             elif request.user.person.is_nurse:
-                appointment_form['doctor'].queryset = Doctor.objects.filter(hospital=appointment.hospital)
+                appointment_form['doctor'].queryset = Doctor.objects.filter(hospital=hospital)
             elif request.user.person.is_patient:
                 del appointment_form.fields['patient']
-                appointment_form['doctor'].queryset = Doctor.objects.filter(hospital=appointment.hospital)
-        elif did is not None:
-            if request.user.person.is_doctor:
-                del appointment_form.fields['doctor']
-                appointment_form['patient'].queryset = Patient.objects.filter(hospital=appointment.hospital)
-            elif request.user.person.is_nurse:
-                appointment_form['patient'].queryset = Patient.objects.filter(hospital=appointment.hospital)
-            elif request.user.person.is_patient:
-                del appointment_form.fields['patient']
-                del appointment_form.fields['doctor']
+                appointment_form['doctor'].queryset = Doctor.objects.filter(hospital=hospital)
+
         else:
             if request.user.person.is_doctor:
                 del appointment_form.fields['doctor']
-                appointment_form['patient'].queryset = Patient.objects.filter(hospital=appointment.hospital)
+                appointment_form['patient'].queryset = Patient.objects.filter(hospital=hospital)
             elif request.user.person.is_nurse:
-                appointment_form['patient'].queryset = Patient.objects.filter(hospital=appointment.hospital)
-                appointment_form['doctor'].queryset = Doctor.objects.filter(hospital=appointment.hospital)
+                appointment_form['patient'].queryset = Patient.objects.filter(hospital=hospital)
+                appointment_form['doctor'].queryset = Doctor.objects.filter(hospital=hospital)
             elif request.user.person.is_patient:
                 del appointment_form.fields['patient']
-                appointment_form['doctor'].queryset = Doctor.objects.filter(hospital=appointment.hospital)
+                appointment_form['doctor'].queryset = Doctor.objects.filter(hospital=hospital)
 
-    return render(request, 'cal/appointments.html', {'create':True,'appointment_form':appointment_form, 'patientid':pid, 'doctorid':did, 'appointment_id':appointmentid, 'error':error})
+    return render(request, 'cal/appointments.html', {'create':True,'appointment_form':appointment_form, 'patientid':pid, 'error':error})
 
 
 @login_required
@@ -150,7 +125,13 @@ def edit_appointment(request, appointmentid):
         appointment_form = AppointmentForm(request.POST)
         Appointment.objects.get(id=appointmentid).delete()
         if appointment_form.is_valid():
-            if appointment_form.doesnt_collide():
+            if request.user.person.is_patient:
+                patientid = request.user.person.id
+                doctorid  = appointment_form.cleaned_data['doctor'].id
+            else:
+                doctorid = request.user.person.id
+                patientid  = appointment_form.cleaned_data['patient'].id
+            if appointment_form.doesnt_collide(patientid, doctorid):
                 appointment=appointment_form.save()
                 if request.user.person.is_patient:
                     appointment.patient = Patient.objects.get(user = request.user.id)

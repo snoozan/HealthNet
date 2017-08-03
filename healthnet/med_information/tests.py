@@ -17,8 +17,9 @@ class MedicalTestCases(TestCase):
     def test_can_create_prescription(self):
         p = Patient.objects.create(name="Logan", user=self.user)
         request = self.factory.get('/med/prescription/create/')
+        request.user = self.user
         response = views.createPrescription(request)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
         request = self.factory.post('/med/prescription/create/')
         request.user = self.user
         request.person = p
@@ -27,25 +28,27 @@ class MedicalTestCases(TestCase):
 
     def test_can_create_test_result(self):
         request = self.factory.get('/med/result/create/')
+        request.user = self.user
         response = views.createTestResult(request)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
         request = self.factory.post('/med/result/create/')
         request.user = self.user
         response = views.createTestResult(request)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
     def test_can_create_record(self):
         request = self.factory.get('/med/record/create/')
+        request.user = self.user
         response = views.createRecord(request)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
         request = self.factory.post('/med/record/create/')
         request.user = self.user
         response = views.createRecord(request)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
     def test_view_prescription(self):
         Patient.objects.create(name='Logan', user=self.user)
         request = self.factory.get('/med/prescription/view/')
         request.user = self.user
         response = views.viewPrescription(request)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
