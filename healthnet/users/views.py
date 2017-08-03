@@ -193,25 +193,25 @@ def create_nurse(request):
             nurse.hospital = Hospital.objects.get(pk=request.user.person.hospital_id)
             nurse.title = nurse_form.cleaned_data.get('title')
             nurse.is_nurse = True
-            content_type = ContentType.objects.get_for_model('Doctor')
+            content_type = ContentType.objects.get_for_model(Doctor)
             permission = Permission.objects.get(
                 codename='admit',
                 content_type=content_type,
             )
             nurse.user.user_permissions.add(permission.id)
-            content_type = ContentType.objects.get_for_model('Doctor')
+            content_type = ContentType.objects.get_for_model(Doctor)
             permission = Permission.objects.get(
                 codename='release',
                 content_type=content_type,
             )
             nurse.user.user_permissions.add(permission.id)
-            content_type = ContentType.objects.get_for_model('Doctor')
+            content_type = ContentType.objects.get_for_model(Doctor)
             permission = Permission.objects.get(
-                codename='view_calendar',
+                codename='view_cal',
                 content_type=content_type,
             )
             nurse.user.user_permissions.add(permission.id)
-            content_type = ContentType.objects.get_for_model('Doctor')
+            content_type = ContentType.objects.get_for_model(Doctor)
             permission = Permission.objects.get(
                 codename='view_med_info',
                 content_type=content_type,
@@ -225,6 +225,7 @@ def create_nurse(request):
             messages.error(request, 'Please correct the error below.')
     else:
         nurse_form = NurseForm()
+        del nurse_form.fields['hospital']
         account_form = SignupForm()
     return render(request, 'users/profile.html', {
         'nurse_form': nurse_form,
@@ -247,37 +248,37 @@ def create_doctor(request):
             doctor.specialty_field = doctor_form.cleaned_data.get('specialty_field')
             doctor.hospital = Hospital.objects.get(pk=request.user.person.hospital_id)
             doctor.is_doctor = True
-            content_type = ContentType.objects.get_for_model('Doctor')
+            content_type = ContentType.objects.get_for_model(Doctor)
             permission = Permission.objects.get(
                 codename='admit',
                 content_type=content_type,
             )
             doctor.user.user_permissions.add(permission.id)
-            content_type = ContentType.objects.get_for_model('Doctor')
+            content_type = ContentType.objects.get_for_model(Doctor)
             permission = Permission.objects.get(
                 codename='release',
                 content_type=content_type,
             )
             doctor.user.user_permissions.add(permission.id)
-            content_type = ContentType.objects.get_for_model('Doctor')
+            content_type = ContentType.objects.get_for_model(Doctor)
             permission = Permission.objects.get(
-                codename='view_calendar',
+                codename='view_cal',
                 content_type=content_type,
             )
             doctor.user.user_permissions.add(permission.id)
-            content_type = ContentType.objects.get_for_model('Doctor')
+            content_type = ContentType.objects.get_for_model(Doctor)
             permission = Permission.objects.get(
                 codename='create_med_info',
                 content_type=content_type,
             )
             doctor.user.user_permissions.add(permission.id)
-            content_type = ContentType.objects.get_for_model('Doctor')
+            content_type = ContentType.objects.get_for_model(Doctor)
             permission = Permission.objects.get(
                 codename='update_med_info',
                 content_type=content_type,
             )
             doctor.user.user_permissions.add(permission.id)
-            content_type = ContentType.objects.get_for_model('Doctor')
+            content_type = ContentType.objects.get_for_model(Doctor)
             permission = Permission.objects.get(
                 codename='view_med_info',
                 content_type=content_type,
@@ -291,6 +292,7 @@ def create_doctor(request):
             messages.error(request, 'Please correct the error below.')
     else:
         doctor_form = DoctorForm()
+        del doctor_form.fields['hospital']
         account_form = SignupForm()
     return render(request, 'users/profile.html', {
         'doctor_form': doctor_form,

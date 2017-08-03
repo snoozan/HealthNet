@@ -17,11 +17,6 @@ class Prescription(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, null=True)
 
-#     class Meta:
-#         permissions = (
-#             ("PatientViewing", "DoctorViewing", "NurseViewing"),
-#                        )
-
 
 class PrescriptionForm(ModelForm):
     patient = ModelChoiceField(queryset=Patient.objects.all(), required=False)
