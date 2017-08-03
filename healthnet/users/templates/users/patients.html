@@ -17,7 +17,7 @@
     {% for patient in in_patients %}
     <tr style='background-color: #ffffff'>
         <td>{{patient.name}}</td>
-        <td><form method="post"><input type="text" name="id" value="{{ patient.id }}" hidden>
+        <td><form action="{% url 'finalize_record' patientid=patient.id %}" method="post"><input type="text" name="id" value="{{ patient.id }}" hidden>
             {% csrf_token %}
             <button type="submit">Discharge</button></form></td>
         <td><input type="button" onclick="location.href='{% url 'view_record' patientid=patient.id %}';" value="View" /></td>
@@ -31,7 +31,7 @@
     {% for patient in out_patients %}
     <tr style='background-color: #dddddd;' >
         <td>{{patient.name}}</td>
-        <td><form method="post"><input type="text" name="id" value="{{ patient.id }}" hidden>
+        <td><form action="{% url 'create_record' patientid=patient.id %}" method="get"><input type="text" name="id" value="{{ patient.id }}" hidden>
             {% csrf_token %}
             <button type="submit" >Admit</button></form></td>
         <td><input type="button" onclick="location.href='{% url 'view_record' patientid=patient.id %}';" value="View" /></td>
@@ -41,6 +41,7 @@
         <input type="button" onclick="location.href='{% url 'create_prescription' patientid=patient.id %}';" value="Add" /></td>
     </tr style='background-color: #dddddd;' >
     {% endfor %}
+
 
 </table>
 
