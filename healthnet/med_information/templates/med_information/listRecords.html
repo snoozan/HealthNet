@@ -32,14 +32,6 @@
         {% endif %}
     </tr>
     {% endfor %}
-    {% if records|length == 0 %}
-    <tr>
-        <td colspan="10">No records
-        {% if request.user.person.is_doctor %}
-        <input type="button" onclick="location.href='{% url 'create_record' patientid=patient.id %}';" value="add" /></td></td>
-        {% endif %}
-    </tr>
-    {% endif %}
 </table>
 
 {% endblock %}

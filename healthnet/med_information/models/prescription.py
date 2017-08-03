@@ -10,9 +10,9 @@ class Prescription(models.Model):
 
     startDate = models.DateField(default=timezone.now(), null=True)
 
-    duration = models.DurationField(default="1 week")
+    duration = models.DurationField(default="1")
 
-    instructions = models.CharField(max_length=1000, null=True)
+    instructions = models.TextField(max_length=1000, null=True)
 
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, null=True)

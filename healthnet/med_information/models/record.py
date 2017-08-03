@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 from django.utils import timezone
 from django.forms import ModelForm, ModelChoiceField
@@ -5,9 +6,9 @@ from users.models.person import Patient, Doctor
 
 
 class Record(models.Model):
-    startDate = models.DateField(auto_now_add=True, null=True)
+    startDate = models.DateTimeField(default=timezone.now(), null=True)
 
-    endDate = models.DateField(null=True)
+    endDate = models.DateTimeField(default=timezone.now(), null=True)
 
     height = models.CharField(max_length=1000, null=True)
 
@@ -21,7 +22,7 @@ class Record(models.Model):
 
     reason = models.CharField(max_length=1000, null=True)
 
-    description = models.CharField(max_length=1000, null=True)
+    description = models.TextField(max_length=1000, null=True)
 
     discharged = models.BooleanField(default=True)
 

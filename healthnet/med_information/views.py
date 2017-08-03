@@ -218,7 +218,7 @@ def viewRecord(request, patientid=None):
     else:
         patient = Patient.objects.get(user=request.user)
 
-    records = Record.objects.filter(patient=patient)
+    records = reversed(Record.objects.filter(patient=patient))
 
     return render(request, 'med_information/medical_info.html', {'records': records, 'patient': patient})
 
@@ -236,7 +236,6 @@ def updateRecord(request, recordid):
         if record_form.is_valid():
             record = Record.objects.get(id=recordid)
             if request.user.person.is_doctor:
-                record.endDate = record_form.cleaned_data['endDate']
                 record.height = record_form.cleaned_data['height']
                 record.weight = record_form.cleaned_data['weight']
                 record.blood_pressure = record_form.cleaned_data['blood_pressure']
@@ -278,12 +277,11 @@ def finalizeRecord(request, patientid):
                 record.patient.save()
             record.save()
             messages.success(request, "Record Updated!")
-            return redirect('view_record', patientid=record.patient.id)
+            return redirect('view_patients')
         #else:
             #print('Form not valid')
     else:
         record_form = RecordForm(instance=Record.objects.get(patient=patientid, discharged=False))
         del record_form.fields['patient']
 
-    return render(request, 'med_information/result.html', {'RecordForm': record_form})
-    #return render(request, 'med_information/record.html', {'RecordForm':record_form, 'recordid':recordid})
+    return render(request, 'med_information/record.html', {'RecordForm': record_form})
