@@ -10,17 +10,17 @@ class Record(models.Model):
 
     endDate = models.DateTimeField(default=timezone.now(), null=True)
 
-    height = models.IntegerField(max_length=1000, null=True, default=0)
+    height = models.IntegerField(null=True, default=0)
 
-    weight = models.IntegerField(max_length=1000, null=True, default=0)
+    weight = models.IntegerField(null=True, default=0)
 
-    systolic_pressure = models.IntegerField(max_length=1000, null=True, default=0)
+    systolic_pressure = models.IntegerField(null=True, default=0)
 
-    diastolic_pressure = models.IntegerField(max_length=1000, null=True, default=0)
+    diastolic_pressure = models.IntegerField(null=True, default=0)
 
-    heart_rate = models.IntegerField(max_length=1000, null=True, default=0)
+    heart_rate = models.IntegerField(null=True, default=0)
 
-    respirations_minute = models.IntegerField(max_length=1000, null=True, default=0)
+    respirations_minute = models.IntegerField(null=True, default=0)
 
     reason = models.CharField(max_length=1000, null=True)
 
