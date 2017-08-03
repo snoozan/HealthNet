@@ -182,6 +182,7 @@ def createRecord(request, patientid=None):
             record = record_form.save()
             if request.user.person.is_doctor:
                 record.doctor = Doctor.objects.get(id=request.user.person.id)
+                record.discharged = False
             if patientid is not None:
                 record.patient = Patient.objects.get(id=patientid)
                 record.patient.admitted = True
@@ -235,6 +236,8 @@ def updateRecord(request, recordid):
                 record.respirations_minute = record_form.cleaned_data['respirations_minute']
                 record.reason = record_form.cleaned_data['reason']
                 record.description = record_form.cleaned_data['description']
+
+                record.discharged = record_form.cleaned_data['discharged']
                 record.save()
                 messages.success(request, "Record Updated!")
                 return redirect('view_record', patientid=record.patient.id)
@@ -246,4 +249,48 @@ def updateRecord(request, recordid):
 
     return render(request, 'med_information/record.html', {'RecordForm':record_form, 'recordid':recordid})
 
+
+@permission_required('users.update_med_info')
+@login_required
+@transaction.atomic
+def finalizeRecord(request, patientid):
+    if request.method == 'POST':
+        #record_form = RecordForm(request.POST)
+        #del record_form.fields['patient']
+
+        #if record_form.is_valid():
+            patient = Patient.objects.get(id=patientid)
+            records = Record.objects.filter(patient=patient)
+            for rec in records:
+                if rec.discharged == False:
+                    record_form = Record.objects.get(rec)
+
+            record = Record.objects.get(id=recordid)
+            if request.user.person.is_doctor:
+                record.endDate = record_form.cleaned_data['endDate']
+                record.height = record_form.cleaned_data['height']
+                record.weight = record_form.cleaned_data['weight']
+                record.blood_pressure = record_form.cleaned_data['blood_pressure']
+                record.heart_rate = record_form.cleaned_data['heart_rate']
+                record.respirations_minute = record_form.cleaned_data['respirations_minute']
+                record.reason = record_form.cleaned_data['reason']
+                record.description = record_form.cleaned_data['description']
+
+                patientid = record.patient.id
+                if patientid is not None:
+                    record.patient = patientid
+                    record.patient.admitted = False
+                    record.patient.save()
+
+                record.discharged = record_form.cleaned_data['discharged']
+                record.save()
+                messages.success(request, "Record Updated!")
+                return redirect('view_record', patientid=record.patient.id)
+        else:
+            print('Form not valid')
+    else:
+        record_form = RecordForm(instance=Record.objects.get(id=recordid))
+        del record_form.fields['patient']
+
+    return render(request, 'med_information/record.html', {'RecordForm': record_form, 'recordid': recordid})
 

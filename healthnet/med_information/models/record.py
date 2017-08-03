@@ -23,6 +23,8 @@ class Record(models.Model):
 
     description = models.CharField(max_length=1000, null=True)
 
+    discharged = models.BooleanField(default=True)
+
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, null=True)
 
@@ -33,4 +35,4 @@ class RecordForm(ModelForm):
     class Meta:
         model = Record
         fields = ('endDate', 'patient', 'height', 'weight', 'blood_pressure', 'heart_rate',
-                  'respirations_minute', 'reason', 'description')
+                  'respirations_minute', 'reason', 'description', 'discharged')
