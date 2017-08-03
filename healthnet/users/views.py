@@ -30,6 +30,8 @@ def user_logged_in_callback(sender, request, user, **kwargs):
 
 @receiver(user_logged_out)
 def user_logged_out_callback(sender, request, user, **kwargs):
+    if request.user.person.hospital is None:
+        return
     loggerName = "UoR" if "UoR" in request.user.person.hospital.name else "Strong"
     logger = logging.getLogger(loggerName)
     logger.info('logout name:{user} username:{username}'.format(
