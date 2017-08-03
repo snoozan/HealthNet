@@ -20,16 +20,14 @@
     <tr>
         <td>{{r.startDate}}</td>
         <td>{{r.endDate}}</td>
-        <td>{{r.height}}</td>
-        <td>{{r.weight}}</td>
-        <td>{{r.blood_pressure}}</td>
-        <td>{{r.heart_rate}}</td>
-        <td>{{r.respirations_minute}}</td>
+        <td>{{r.height}} Inches</td>
+        <td>{{r.weight}}lbs</td>
+        <td>{{r.systolic_pressure}}/{{r.diastolic_pressure}}</td>
+        <td>{{r.heart_rate}} BPM</td>
+        <td>{{r.respirations_minute}} BPM</td>
         <td>{{r.reason}}</td>
         <td>{{r.description}}</td>
-        {% if request.user.person.is_doctor and r.discharged == False %}
-        <td><input type="button" onclick="location.href='{% url 'update_record' recordid=r.id %}';" value="edit" /></td>
-        {% endif %}
+
     </tr>
     {% endfor %}
 </table>

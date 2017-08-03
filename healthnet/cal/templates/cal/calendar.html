@@ -1,9 +1,9 @@
 {% extends 'users/base.html' %}
 {% block content %}
 {% csrf_token %}
-{%if pid %}
+{% if pid %}
     <a class="navbar-brand" href="{% url 'create' pid %}">Create Appointment</a><br/>
-{% else %}
+{% elif not request.user.person.is_nurse %}
     <a href="{% url 'create' %}">Create Appointment</a><br/>
 {% endif %}
 <h3>

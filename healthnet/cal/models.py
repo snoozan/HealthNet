@@ -10,7 +10,7 @@ class Appointment(models.Model):
     time_hour = models.CharField(max_length=2,
                                  choices=(('8','8 a.m.'),('9','9 a.m.'),('10','10 a.m.'),('11','11 a.m.'),
                                           ('12','12 p.m.'),('1','1 p.m.'),('2','2 p.m.'),('3','3 p.m.'),
-                                            ('4','4 p.m.'),('5','5 p.m.')),
+                                            ('4','4 p.m.')),
                                  default='12',
                                 null = True)
     time_min = models.CharField(max_length=2,

@@ -24,7 +24,21 @@
 <form method="post" >
   {% csrf_token %}
 {% for field in RecordForm %}
-    <div class="text-left centerdiv recordsize">{{ field.label_tag}} {{ field }}</div><br/>
+    <div class="text-left centerdiv recordsize">{{ field.label_tag}} {{ field }}
+    {% if field.name == 'height' %}
+        Inches
+    {% elif field.name == 'weight' %}
+        lbs
+    {% elif field.name == 'systolic_pressure' %}
+        mmHg
+    {% elif field.name == 'diastolic_pressure' %}
+        mmHg
+    {% elif field.name == 'heart_rate' %}
+        BPM
+    {% elif field.name == 'respirations_minute' %}
+        BPM
+    {% endif %}
+    </div><br/>
 {% endfor %}
 <button type="submit">Submit</button>
 </form>
