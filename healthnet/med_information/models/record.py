@@ -10,15 +10,17 @@ class Record(models.Model):
 
     endDate = models.DateTimeField(default=timezone.now(), null=True)
 
-    height = models.CharField(max_length=1000, null=True)
+    height = models.IntegerField(max_length=1000, null=True, default=0)
 
-    weight = models.CharField(max_length=1000, null=True)
+    weight = models.IntegerField(max_length=1000, null=True, default=0)
 
-    blood_pressure = models.CharField(max_length=1000, null=True)
+    systolic_pressure = models.IntegerField(max_length=1000, null=True, default=0)
 
-    heart_rate = models.CharField(max_length=1000, null=True)
+    diastolic_pressure = models.IntegerField(max_length=1000, null=True, default=0)
 
-    respirations_minute = models.CharField(max_length=1000, null=True)
+    heart_rate = models.IntegerField(max_length=1000, null=True, default=0)
+
+    respirations_minute = models.IntegerField(max_length=1000, null=True, default=0)
 
     reason = models.CharField(max_length=1000, null=True)
 
@@ -35,5 +37,5 @@ class RecordForm(ModelForm):
 
     class Meta:
         model = Record
-        fields = ('endDate', 'patient', 'height', 'weight', 'blood_pressure', 'heart_rate',
+        fields = ('endDate', 'patient', 'height', 'weight', 'systolic_pressure', 'diastolic_pressure', 'heart_rate',
                   'respirations_minute', 'reason', 'description', 'discharged')

@@ -10,7 +10,7 @@ class Prescription(models.Model):
 
     startDate = models.DateField(default=timezone.now(), null=True)
 
-    duration = models.DurationField(default="1")
+    duration = models.IntegerField(default="1")
 
     instructions = models.TextField(max_length=1000, null=True)
 
