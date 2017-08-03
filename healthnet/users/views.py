@@ -19,7 +19,7 @@ from .models.person import Patient, Doctor, Person
 
 @receiver(user_logged_in)
 def user_logged_in_callback(sender, request, user, **kwargs):
-    if request.user.person.hospital is None:
+    if user.person.hospital is None:
         return
     loggerName = "UoR" if "UoR" in request.user.person.hospital.name else "Strong"
     logger = logging.getLogger(loggerName)
@@ -30,7 +30,7 @@ def user_logged_in_callback(sender, request, user, **kwargs):
 
 @receiver(user_logged_out)
 def user_logged_out_callback(sender, request, user, **kwargs):
-    if request.user.person.hospital is None:
+    if user.person.hospital is None:
         return
     loggerName = "UoR" if "UoR" in request.user.person.hospital.name else "Strong"
     logger = logging.getLogger(loggerName)
@@ -42,7 +42,7 @@ def user_logged_out_callback(sender, request, user, **kwargs):
 
 # Create your views here.
 @login_required
-def home(request, userid=None):
+def home(request):
     if request.user.person.is_patient:
         if not request.user.person.patient.name or not request.user.person.hospital:
             return redirect("update_patient")
@@ -107,6 +107,7 @@ def logs(request):
     print(os.path.isfile(fname))
     with open(fname) as f:
         content = f.readlines()
+    content = reversed(content)
     return render(request, 'users/logs.html', {
         'logs': content
     })
@@ -316,6 +317,27 @@ def create_admin(request):
             admin.name = admin_form.cleaned_data.get('name')
             admin.hospital = Hospital.objects.get(pk=request.user.person.hospital_id)
             admin.is_admin = True
+            content_type = ContentType.objects.get_for_model(Admin)
+            permission = Permission.objects.get(
+                codename='transfer',
+                content_type=content_type,
+            )
+            admin.user.user_permissions.add(permission.id)
+            permission = Permission.objects.get(
+                codename='update_patient',
+                content_type=content_type,
+            )
+            admin.user.user_permissions.add(permission.id)
+            permission = Permission.objects.get(
+                codename='update',
+                content_type=content_type,
+            )
+            admin.user.user_permissions.add(permission.id)
+            permission = Permission.objects.get(
+                codename='logs',
+                content_type=content_type,
+            )
+            admin.user.user_permissions.add(permission.id)
             admin.save()
             messages.success(request, 'Your profile was successfully updated!')
             return redirect('update')
@@ -323,6 +345,7 @@ def create_admin(request):
             messages.error(request, 'Please correct the error below.')
     else:
         admin_form = AdminForm()
+        del admin_form.fields['hospital']
         account_form = SignupForm()
     return render(request, 'users/profile.html', {
         'doctor_form': admin_form,
@@ -395,7 +418,7 @@ def transfer_patient(request, pk):
             messages.success(request, 'Patient was transferred successfully!')
             hospitals = Hospital.objects.exclude(pk=Patient.objects.get(pk=pk).hospital_id)
             type = "admin" if request.user.person.is_admin else "doctor"
-            logger.info('transfer patient:{patient} by {user}:{type} from {currHospital} to {newHospital}'.format(
+            logger.info('Transfer patient:{patient} by {user}:{type} from {currHospital} to {newHospital}'.format(
                 patient = patient.name,
                 user= request.user.person.name,
                 type = type,

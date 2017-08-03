@@ -1,5 +1,6 @@
 import datetime
 
+import logging
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.shortcuts import render, redirect
@@ -35,6 +36,8 @@ def createPrescription(request, patientid=None):
     if request.method == 'POST':
         prescription_form = PrescriptionForm(request.POST)
         del prescription_form.fields['patient']
+        loggerName = "UoR" if "UoR" in request.user.person.hospital.name else "Strong"
+        logger = logging.getLogger(loggerName)
         if prescription_form.is_valid():
             prescription = prescription_form.save()
             if request.user.person.is_doctor:
@@ -44,6 +47,11 @@ def createPrescription(request, patientid=None):
             else:
                 print('patient id doesnt exist')
             prescription.save()
+            logger.info('Created Prescription : {prescription} for {patient} by {user}:Doctor'.format(
+                user=request.user.person.name,
+                patient=prescription.patient.name,
+                prescription=prescription.title
+            ))
 
         else:
             print('Form not valid')
@@ -68,6 +76,8 @@ def updatePrescription(request, prescriptionid):
         prescription_form = PrescriptionForm(request.POST)
         del prescription_form.fields['startDate']
         del prescription_form.fields['patient']
+        loggerName = "UoR" if "UoR" in request.user.person.hospital.name else "Strong"
+        logger = logging.getLogger(loggerName)
 
         if prescription_form.is_valid():
             prescription = Prescription.objects.get(id=prescriptionid)
@@ -76,6 +86,11 @@ def updatePrescription(request, prescriptionid):
                 prescription.duration = prescription_form.cleaned_data['duration']
                 prescription.instructions = prescription_form.cleaned_data['instructions']
                 prescription.save()
+                logger.info('Updated Prescription : {prescription} for {patient} by {user}:Doctor'.format(
+                    user=request.user.person.name,
+                    patient=Prescription.objects.get(id=prescriptionid).patient.name,
+                    prescription=prescription.title
+                ))
                 messages.success(request, "Prescription Updated!")
                 return redirect('view_prescription', patientid=prescription.patient.id)
         else:
@@ -106,6 +121,8 @@ def viewPrescription(request, patientid=None):
 @login_required
 @transaction.atomic
 def createTestResult(request, patientid=None):
+    loggerName = "UoR" if "UoR" in request.user.person.hospital.name else "Strong"
+    logger = logging.getLogger(loggerName)
     if request.method == 'POST':
         result_form = ResultForm(request.POST)
         del result_form.fields['patient']
@@ -113,12 +130,12 @@ def createTestResult(request, patientid=None):
             result = result_form.save()
             if request.user.person.is_doctor:
                 result.doctor = Doctor.objects.get(id=request.user.person.id)
-            if patientid is not None:
-                print('patient set, id exists')
-                result.patient = Patient.objects.get(id=patientid)
-            else:
-                print('patient id doesnt exist')
+            result.patient = Patient.objects.get(id=patientid)
             result.save()
+            logger.info('Created Test Result for {patient} by {user}:Doctor'.format(
+                user=request.user.person.name,
+                patient=Patient.objects.get(id=patientid).name
+            ))
 
         else:
             print('Form not valid')
@@ -136,6 +153,8 @@ def createTestResult(request, patientid=None):
 @login_required
 @transaction.atomic
 def updateTestResult(request, resultid):
+    loggerName = "UoR" if "UoR" in request.user.person.hospital.name else "Strong"
+    logger = logging.getLogger(loggerName)
     if request.method == 'POST':
         result_form = ResultForm(request.POST)
         del result_form.fields['patient']
@@ -147,6 +166,10 @@ def updateTestResult(request, resultid):
                 result.comments = result_form.cleaned_data['comments']
                 result.released = result_form.cleaned_data['released']
                 result.save()
+                logger.info('Updated Test Result for {patient} by {user}:Doctor'.format(
+                    user=request.user.person.name,
+                    patient=Result.objects.get(id=resultid).patient.name
+                ))
                 messages.success(request, "Test Result Updated!")
                 return redirect('view_result', patientid=result.patient.id)
         else:
@@ -245,6 +268,10 @@ def updateRecord(request, recordid):
                 record.description = record_form.cleaned_data['description']
 
                 record.save()
+                logger.info('Updated Record for {patient} by {user}:Doctor'.format(
+                    user=request.user.person.name,
+                    patient=Record.objects.get(id=recordid).patient.name
+                ))
                 messages.success(request, "Record Updated!")
                 return redirect('view_record', patientid=record.patient.id)
         else:
