@@ -48,7 +48,7 @@ def createPrescription(request, patientid=None):
         else:
             print('Form not valid')
 
-        return redirect('view_prescription', patientid=patientid)
+        return redirect('view_medical', patientid=patientid)
 
     else:
         prescription_form = PrescriptionForm()
@@ -77,7 +77,7 @@ def updatePrescription(request, prescriptionid):
                 prescription.instructions = prescription_form.cleaned_data['instructions']
                 prescription.save()
                 messages.success(request, "Prescription Updated!")
-                return redirect('view_prescription', patientid=prescription.patient.id)
+                return redirect('view_medical', patientid=prescription.patient.id)
         else:
             print('houston we have an error')
     else:
@@ -111,7 +111,7 @@ def createTestResult(request, patientid=None):
         else:
             print('Form not valid')
 
-        return redirect('view_result', patientid=patientid)
+        return redirect('view_medical', patientid=patientid)
 
     else:
         result_form = ResultForm()
@@ -136,7 +136,7 @@ def updateTestResult(request, resultid):
                 result.released = result_form.cleaned_data['released']
                 result.save()
                 messages.success(request, "Test Result Updated!")
-                return redirect('view_result', patientid=result.patient.id)
+                return redirect('view_medical', patientid=result.patient.id)
         else:
             print('Form not valid')
     else:
@@ -210,7 +210,7 @@ def createRecord(request, patientid=None):
         else:
             print('Form is not valid')
 
-        return redirect('view_record', patientid=patientid)
+        return redirect('view_medical', patientid=patientid)
 
     else:
         record_form = RecordForm()
@@ -246,7 +246,7 @@ def updateRecord(request, patientid):
 
                 record.save()
                 messages.success(request, "Record Updated!")
-                return redirect('view_record', patientid=record.patient.id)
+                return redirect('view_medical', patientid=record.patient.id)
         else:
             print('Form not valid')
     else:
