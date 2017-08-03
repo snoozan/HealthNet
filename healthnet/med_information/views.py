@@ -88,18 +88,6 @@ def updatePrescription(request, prescriptionid):
     return render(request, 'med_information/prescription.html', {'PrescriptionForm':prescription_form, 'prescriptionid':prescriptionid})
 
 
-@permission_required('users.view_med_info')
-@login_required
-@transaction.atomic
-def viewPrescription(request, patientid=None):
-    if patientid is not None:
-        patient = Patient.objects.get(id = patientid)
-    else:
-        patient = Patient.objects.get(user = request.user)
-
-    prescriptions = Prescription.objects.filter(patient=patient)
-
-    return render(request, 'med_information/medical_info.html', {'prescriptions':prescriptions, 'patient':patient})
 
 
 @permission_required('users.create_med_info')
@@ -157,6 +145,31 @@ def updateTestResult(request, resultid):
 
     return render(request, 'med_information/result.html', {'ResultForm':result_form, 'resultid':resultid})
 
+@permission_required('users.view_med_info')
+@login_required
+@transaction.atomic
+def viewPrescription(request, patientid=None):
+    if patientid is not None:
+        patient = Patient.objects.get(id = patientid)
+    else:
+        patient = Patient.objects.get(user = request.user)
+
+    prescriptions = Prescription.objects.filter(patient=patient)
+
+    return render(request, 'med_information/medical_info.html', {'prescriptions':prescriptions, 'patient':patient})
+@permission_required('users.view_med_info')
+@login_required
+@transaction.atomic
+def viewRecord(request, patientid=None):
+    if patientid is not None:
+        patient = Patient.objects.get(id=patientid)
+    else:
+        patient = Patient.objects.get(user=request.user)
+
+    records = Record.objects.filter(patient=patient)
+    print(records)
+
+    return render(request, 'med_information/medical_info.html', {'records': records, 'patient': patient})
 
 @permission_required('users.view_med_info')
 @login_required
@@ -208,25 +221,10 @@ def createRecord(request, patientid=None):
 
         return render(request, 'med_information/record.html', {'RecordForm':record_form})
 
-
-@permission_required('users.view_med_info')
-@login_required
-@transaction.atomic
-def viewRecord(request, patientid=None):
-    if patientid is not None:
-        patient = Patient.objects.get(id=patientid)
-    else:
-        patient = Patient.objects.get(user=request.user)
-
-    records = reversed(Record.objects.filter(patient=patient))
-
-    return render(request, 'med_information/medical_info.html', {'records': records, 'patient': patient})
-
-
 @permission_required('users.update_med_info')
 @login_required
 @transaction.atomic
-def updateRecord(request, recordid):
+def updateRecord(request, patientid):
     if request.method == 'POST':
         record_form = RecordForm(request.POST)
         del record_form.fields['patient']
@@ -234,11 +232,13 @@ def updateRecord(request, recordid):
         del record_form.fields['discharged']
 
         if record_form.is_valid():
-            record = Record.objects.get(id=recordid)
+            patient = Patient.objects.get(id = patientid)
+            record = Record.objects.get(patient=patient, discharged = False)
             if request.user.person.is_doctor:
                 record.height = record_form.cleaned_data['height']
                 record.weight = record_form.cleaned_data['weight']
-                record.blood_pressure = record_form.cleaned_data['blood_pressure']
+                record.systolic_pressure = record_form.cleaned_data['systolic_pressure']
+                record.diastolic_pressure = record_form.cleaned_data['diastolic_pressure']
                 record.heart_rate = record_form.cleaned_data['heart_rate']
                 record.respirations_minute = record_form.cleaned_data['respirations_minute']
                 record.reason = record_form.cleaned_data['reason']
@@ -250,12 +250,14 @@ def updateRecord(request, recordid):
         else:
             print('Form not valid')
     else:
-        record_form = RecordForm(instance=Record.objects.get(id=recordid))
+        patient = Patient.objects.get(id = patientid)
+        record = Record.objects.get(patient=patient, discharged = False)
+        record_form = RecordForm(instance=Record.objects.get(id=record.id))
         del record_form.fields['patient']
         del record_form.fields['endDate']
         del record_form.fields['discharged']
 
-    return render(request, 'med_information/record.html', {'RecordForm':record_form, 'recordid':recordid})
+    return render(request, 'med_information/record.html', {'RecordForm':record_form, 'recordid':record.id})
 
 
 @permission_required('users.update_med_info')

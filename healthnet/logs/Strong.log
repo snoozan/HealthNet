@@ -126,3 +126,12 @@
 2017-08-02 19:39:09,950 views login name:mary username:mary
 2017-08-02 19:39:13,848 views Admit patient:sarah by mary:doctor to Strong Memorial Hospital
 2017-08-02 19:39:13,848 views Discharge patient:sarah by mary:doctor from Strong Memorial Hospital
+2017-08-03 16:49:13,015 views logout name:Sarah username:sarah
+2017-08-03 16:49:15,723 views login name:mary username:mary
+2017-08-03 16:53:57,035 views logout name:mary username:mary
+2017-08-03 16:54:11,652 views login name:janet username:janet
+2017-08-03 16:56:27,136 views logout name:janet username:janet
+2017-08-03 16:56:30,273 views login name:mary username:mary
+2017-08-03 17:10:06,583 views logout name:mary username:mary
+2017-08-03 17:10:11,636 views login name:mary username:mary
+2017-08-03 17:37:28,738 views login name:mary username:mary

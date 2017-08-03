@@ -29,7 +29,7 @@ def view_calendar(request, pk=None):
         elif request.user.person.is_doctor:
             appointments = Appointment.objects.filter(doctor=request.user.person.id)
         elif request.user.person.is_nurse:
-            appointments = Appointment.objects.all(hospital=request.user.person.hospital, date__range=(now, two_weeks))
+            appointments = Appointment.objects.filter(hospital=request.user.person.hospital, date__range=(now, two_weeks))
         else:
             appointments = None
         name = None
