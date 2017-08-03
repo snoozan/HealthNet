@@ -236,7 +236,6 @@ def updateRecord(request, recordid):
         if record_form.is_valid():
             record = Record.objects.get(id=recordid)
             if request.user.person.is_doctor:
-                record.endDate = record_form.cleaned_data['endDate']
                 record.height = record_form.cleaned_data['height']
                 record.weight = record_form.cleaned_data['weight']
                 record.blood_pressure = record_form.cleaned_data['blood_pressure']
