@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.shortcuts import render, redirect
@@ -177,6 +179,8 @@ def createRecord(request, patientid=None):
     if request.method == 'POST':
         record_form = RecordForm(request.POST)
         del record_form.fields['patient']
+        del record_form.fields['endDate']
+        del record_form.fields['discharged']
 
         if record_form.is_valid():
             record = record_form.save()
@@ -199,6 +203,8 @@ def createRecord(request, patientid=None):
         record_form = RecordForm()
         if patientid is not None:
             del record_form.fields['patient']
+            del record_form.fields['endDate']
+            del record_form.fields['discharged']
 
         return render(request, 'med_information/record.html', {'RecordForm':record_form})
 
@@ -224,6 +230,8 @@ def updateRecord(request, recordid):
     if request.method == 'POST':
         record_form = RecordForm(request.POST)
         del record_form.fields['patient']
+        del record_form.fields['endDate']
+        del record_form.fields['discharged']
 
         if record_form.is_valid():
             record = Record.objects.get(id=recordid)
@@ -237,7 +245,6 @@ def updateRecord(request, recordid):
                 record.reason = record_form.cleaned_data['reason']
                 record.description = record_form.cleaned_data['description']
 
-                record.discharged = record_form.cleaned_data['discharged']
                 record.save()
                 messages.success(request, "Record Updated!")
                 return redirect('view_record', patientid=record.patient.id)
@@ -246,6 +253,8 @@ def updateRecord(request, recordid):
     else:
         record_form = RecordForm(instance=Record.objects.get(id=recordid))
         del record_form.fields['patient']
+        del record_form.fields['endDate']
+        del record_form.fields['discharged']
 
     return render(request, 'med_information/record.html', {'RecordForm':record_form, 'recordid':recordid})
 
@@ -255,42 +264,26 @@ def updateRecord(request, recordid):
 @transaction.atomic
 def finalizeRecord(request, patientid):
     if request.method == 'POST':
-        #record_form = RecordForm(request.POST)
-        #del record_form.fields['patient']
-
-        #if record_form.is_valid():
-            patient = Patient.objects.get(id=patientid)
-            records = Record.objects.filter(patient=patient)
-            for rec in records:
-                if rec.discharged == False:
-                    record_form = Record.objects.get(rec)
-
-            record = Record.objects.get(id=recordid)
-            if request.user.person.is_doctor:
-                record.endDate = record_form.cleaned_data['endDate']
-                record.height = record_form.cleaned_data['height']
-                record.weight = record_form.cleaned_data['weight']
-                record.blood_pressure = record_form.cleaned_data['blood_pressure']
-                record.heart_rate = record_form.cleaned_data['heart_rate']
-                record.respirations_minute = record_form.cleaned_data['respirations_minute']
-                record.reason = record_form.cleaned_data['reason']
-                record.description = record_form.cleaned_data['description']
-
-                patientid = record.patient.id
-                if patientid is not None:
-                    record.patient = patientid
-                    record.patient.admitted = False
-                    record.patient.save()
-
-                record.discharged = record_form.cleaned_data['discharged']
-                record.save()
-                messages.success(request, "Record Updated!")
-                return redirect('view_record', patientid=record.patient.id)
-        else:
-            print('Form not valid')
-    else:
-        record_form = RecordForm(instance=Record.objects.get(id=recordid))
+        record_form = RecordForm(instance=Record.objects.get(patient=patientid, discharged=False))
         del record_form.fields['patient']
 
-    return render(request, 'med_information/record.html', {'RecordForm': record_form, 'recordid': recordid})
+        #if record_form.is_valid():
+        record = Record.objects.get(patient=patientid, discharged=False)
+        if request.user.person.is_doctor:
+            record.endDate = datetime.datetime.now()
+            record.discharged = True
+            if patientid is not None:
+                record.patient = Patient.objects.get(id=patientid)
+                record.patient.admitted = False
+                record.patient.save()
+            record.save()
+            messages.success(request, "Record Updated!")
+            return redirect('view_record', patientid=record.patient.id)
+        #else:
+            #print('Form not valid')
+    else:
+        record_form = RecordForm(instance=Record.objects.get(patient=patientid, discharged=False))
+        del record_form.fields['patient']
 
+    return render(request, 'med_information/result.html', {'RecordForm': record_form})
+    #return render(request, 'med_information/record.html', {'RecordForm':record_form, 'recordid':recordid})
