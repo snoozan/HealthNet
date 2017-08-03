@@ -1,7 +1,8 @@
 {% extends 'users/base.html' %}
 {% block content %}
 {% csrf_token %}
-    Average number of patients admitted: {{ admitted }} <br>
+    Number of patients admitted: {{ admitted }} <br>
+    Average number of visits per patient: {{ num_visits }} <br>
     Average length of stay: {{ avg_length }} <br>
     Most popular prescriptions: {{ prescriptions }} <br>
     Most common reason: {{ reason }} <br>

@@ -18,25 +18,30 @@ class Statistics(models.Model):
     )
 
     def number_admitted_patients(self):
-        return Patient.objects.filter(hospital=self.hospital.id, admitted=True)
+        return len(Patient.objects.filter(hospital=self.hospital.id, admitted=True))
 
     def avg_num_visits_patient(self):
         """
         returns the average number of visits per patient
         """
-        pass
+        patients = Patient.objects.all()
+        count = 0
+        for patient in patients:
+            count += len(Record.objects.filter(patient_id=patient.id))
+        return count/len(patients)
+
 
     def avg_visits_length(self):
         records = Record.objects.all()
         patient_visit = []
         for record in records:
             patient_visit.append(datetime.timedelta(record.startDate, record.endDate))
-        return sum(patient_visit, datetime.timedelta()) / len(patient_visit)
+        return sum(patient_visit, datetime.timedelta()) / (len(patient_visit)+1)
 
     def get_popular_prescriptions(self):
         names = [script.Title for script in Prescription.objects.all()]
-        return Counter(names).most_common(1)[0]
+        return Counter(names).most_common(1)
 
     def get_most_common_reason(self):
         reasons = [record.reason for record in Record.objects.all()]
-        return Counter(reasons).most_common(1)[0]
+        return Counter(reasons).most_common(1)
