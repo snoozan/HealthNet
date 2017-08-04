@@ -272,7 +272,7 @@ def updateRecord(request, patientid):
                 record.save()
                 logger.info('Updated Record for {patient} by {user}:Doctor'.format(
                     user=request.user.person.name,
-                    patient=Record.objects.get(id=patientid).patient.name
+                    patient=Patient.objects.get(id=patientid)
                 ))
                 messages.success(request, "Record Updated!")
                 return redirect('view_medical', patientid=record.patient.id)

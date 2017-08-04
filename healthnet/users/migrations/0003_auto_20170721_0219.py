@@ -170,6 +170,12 @@ def create_people(apps, schema_editor):
         doctor.user.user_permissions.add(permission.id)
         content_type = ContentType.objects.get_for_model(apps.get_model('users', 'Doctor'))
         permission = Permission.objects.get(
+            codename='transfer',
+            content_type=content_type,
+        )
+        doctor.user.user_permissions.add(permission.id)
+        content_type = ContentType.objects.get_for_model(apps.get_model('users', 'Doctor'))
+        permission = Permission.objects.get(
             codename='release',
             content_type=content_type,
         )
