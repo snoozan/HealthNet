@@ -6,9 +6,7 @@
 <table class="table table-bordered text-center">
     <th>Test Date</th>
     <th>Title</th>
-    {% if not request.user.person.is_patient %}
     <th>Comments</th>
-    {% endif %}
     <th>Released</th>
     <th></th>
 
@@ -16,8 +14,10 @@
     <tr>
         <td>{{r.test_date}}</td>
         <td>{{r.title}}</td>
-        {% if not request.user.person.is_patient %}
+        {% if not request.user.person.is_patient or r.released == True %}
         <td>{{r.comments}}</td>
+        {% elif r.released == False %}
+        <td></td>
         {% endif %}
         <td>{{r.released}}</td>
         {% if request.user.person.is_doctor %}
