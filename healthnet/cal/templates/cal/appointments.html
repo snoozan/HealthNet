@@ -26,8 +26,15 @@
   {% csrf_token %}
 {% for field in appointment_form %}
     <div class="formcontrol text-left centerdiv formsize"> {{ field.label_tag}} {{ field }}</div><br/>
+    {% if field.help_text %}
+        <small style="color: grey">{{ field.help_text | safe }}</small>
+    {% endif %}
+    {% for error in field.errors %}
+        <p style="color: red">{{ error }}</p>
+    {% endfor %}
 {% endfor %}
 <br/>
+{% if not request.user.person.is_nurse %}
 {% if create %}
     <button type="submit" >Create Appointment</button>
     <input type='hidden' name='appointment_id' value={{appointment_id}}>
@@ -41,6 +48,7 @@
     <form action={% url 'delete' appointment_id %}>
         <input type="submit" value="Delete Appointment" />
     </form>
+{% endif %}
 {% endif %}
 </div>
 {% endblock %}

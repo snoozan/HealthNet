@@ -44,6 +44,10 @@
         <li><a class="navbar-brand" href="{% url 'logs' %}"><h4>View Activity Logs</h4></a></li>
         <li><a class="navbar-brand" href="{% url 'stats' %}"><h4>View Hospital Stats</h4></a></li>
     {% endif %}
+
+  {%  if user.person.is_doctor %}
+      <li><a class="navbar-brand" href="{% url 'transfer_patients' %}"><h4>Transfer Patients</h4></a></li>
+  {%  endif %}
     {% if user.person.is_doctor or user.person.is_nurse %}
         <li><a class="navbar-brand" href="{% url 'view_patients' %}"><h4>View Patients</h4></a></li>
     {% endif %}

@@ -289,6 +289,12 @@ def create_doctor(request):
                 content_type=content_type,
             )
             doctor.user.user_permissions.add(permission.id)
+            content_type = ContentType.objects.get_for_model(Admin)
+            permission = Permission.objects.get(
+                codename='transfer',
+                content_type=content_type,
+            )
+            doctor.user.user_permissions.add(permission.id)
 
             doctor.save()
             messages.success(request, 'Your profile was successfully updated!')
@@ -397,8 +403,7 @@ def view_patients(request):
 @login_required
 @transaction.atomic
 def transfer_view(request):
-    if(request.user.person.is_admin):
-        patients = Patient.objects.filter(hospital=request.user.person.hospital_id)
+    patients = Patient.objects.filter(hospital=request.user.person.hospital_id)
     return render(request, 'users/patients.html', {
         'patients': patients,
         'transfer': True
@@ -439,10 +444,7 @@ def transfer_patient(request, pk):
         return redirect("transfer_patients")
 
     else:
-        if(request.user.person.is_admin):
-            hospitals = Hospital.objects.exclude(pk=Patient.objects.get(pk=pk).hospital_id)
-        else:
-            hospitals = Hospital.objects.get(pk=request.user.person.hospital_id)
+        hospitals = Hospital.objects.exclude(pk=Patient.objects.get(pk=pk).hospital_id)
         patient = Patient.objects.get(pk=pk)
     return render(request, 'users/transfer.html', {
         'hospitals': hospitals,
