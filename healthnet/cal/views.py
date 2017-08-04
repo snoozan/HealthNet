@@ -6,22 +6,22 @@ from django import forms
 from django.db import transaction
 from django.contrib import messages
 from .models import AppointmentForm, Appointment
-from users.models import Person, Doctor, Patient
+from users.models import Person, Doctor, Patient, Hospital
 from django.db import models
 
 @login_required
 @transaction.atomic
 def view_calendar(request, pk=None):
     now = datetime.datetime.now()
-    two_weeks = now + datetime.timedelta(weeks=1)
+    one_week = now + datetime.timedelta(weeks=1)
 
     if pk is not None:
         if request.user.person.is_doctor:
             appointments = Appointment.objects.filter(patient=pk)
         elif request.user.person.is_nurse:
-            appointments = Appointment.objects.filter(patient=pk, date__range=(now, two_weeks))
+            appointments = Appointment.objects.filter(patient=pk, date__range=(now, one_week))
         elif request.user.person.is_patient:
-            appointments = Appointment.objects.filter(patient=pk, date__range=(now, two_weeks))
+            appointments = Appointment.objects.filter(patient=pk)
         name = Patient.objects.get(person_ptr_id=pk).name
     else:
         if request.user.person.is_patient:
@@ -29,7 +29,7 @@ def view_calendar(request, pk=None):
         elif request.user.person.is_doctor:
             appointments = Appointment.objects.filter(doctor=request.user.person.id)
         elif request.user.person.is_nurse:
-            appointments = Appointment.objects.filter(hospital=request.user.person.hospital, date__range=(now, two_weeks))
+            appointments = Appointment.objects.filter(hospital=request.user.person.hospital, date__range=(now, one_week))
         else:
             appointments = None
         name = None
@@ -55,6 +55,7 @@ def create_appointment(request, pid=None):
                 appointment = appointment_form.save()
                 appointment.doctor = Doctor.objects.get(id=doctorid)
                 appointment.patient = Patient.objects.get(id=patientid)
+                appointment.hospital = Hospital.objects.get(id=request.user.person.hospital_id)
 
                 appointment.save()
 

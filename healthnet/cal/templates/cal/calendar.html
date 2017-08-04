@@ -1,7 +1,7 @@
 {% extends 'users/base.html' %}
 {% block content %}
 {% csrf_token %}
-{% if pid %}
+{% if pid and not request.user.person.is_nurse %}
     <a class="navbar-brand" href="{% url 'create' pid %}">Create Appointment</a><br/>
 {% elif not request.user.person.is_nurse %}
     <a href="{% url 'create' %}">Create Appointment</a><br/>
@@ -21,7 +21,9 @@
             {% elif request.user.person.is_doctor %}
                 <li><a href="{% url 'update' a.id %}">{{ a.description }} with {{ a.patient.name}} on {{ a.date|date:"M d, Y"}} at {{a.time_hour}}:{{a.time_min}}</a></li><br/>
             {% elif request.user.person.is_nurse %}
-                <li><a href="{% url 'update' a.id %}"> {{ a.doctor.name}} meeting with {{ a.patient.name }} for {{ a.description }} on {{ a.date|date:"M d, Y"}} at {{a.time_hour}}:{{a.time_min}}</a></li><br/>
+                {% if a.patient.name %}
+                <li>{{ a.doctor.name}} meeting with {{ a.patient.name }} for {{ a.description }} on {{ a.date|date:"M d, Y"}} at {{a.time_hour}}:{{a.time_min}}</li><br/>
+                {% endif %}
             {% endif %}
     {% endfor %}
     {% else %}
