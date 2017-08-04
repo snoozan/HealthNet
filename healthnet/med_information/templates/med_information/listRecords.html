@@ -28,7 +28,7 @@
         <td>{{r.reason}}</td>
         <td>{{r.description}}</td>
         {% if not r.discharged and request.user.person.is_doctor %}
-            <td><input type="button" onclick="location.href='{% url 'update_record' patientid = r.patient.id %}';" value="edit" /></td>
+            <td><input type="button" onclick="location.href='{% url 'update_record' patientid=r.patient.id %}';" value="edit" /></td>
         {% endif %}
     </tr>
     {% endfor %}
