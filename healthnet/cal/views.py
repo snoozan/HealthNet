@@ -43,6 +43,22 @@ def create_appointment(request, pid=None):
     if request.method == 'POST':
         appointment_form = AppointmentForm(request.POST)
         if appointment_form.is_valid():
+            if(request.user.person.is_doctor):
+                try:
+                    appointment_form.cleaned_data['patient'].id
+                except AttributeError:
+                    error = "Please select a patient."
+                    del appointment_form.fields['doctor']
+                    return render(request, 'cal/appointments.html', {'create':True,'appointment_form':appointment_form, 'patientid':pid, 'error':error})
+
+            if(request.user.person.is_patient):
+                try:
+                    appointment_form.cleaned_data['doctor'].id
+                except AttributeError:
+                    error = "Please select a doctor."
+                    del appointment_form.fields['patient']
+                    return render(request, 'cal/appointments.html', {'create':True,'appointment_form':appointment_form, 'patientid':pid, 'error':error})
+
 
             if request.user.person.is_patient:
                 patientid = request.user.person.id
