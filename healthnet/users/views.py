@@ -11,15 +11,17 @@ from django.db import transaction
 from django.contrib.auth.signals import user_logged_in, user_logged_out, user_login_failed
 from django.dispatch import receiver
 
+import datetime
 import logging
 
+from med_information.models.record import Record
 from users.models import Hospital
 from .models.person import PatientForm, SignupForm, DoctorForm, NurseForm, AdminForm, Admin, Nurse
 from .models.person import Patient, Doctor, Person
 
 @receiver(user_logged_in)
 def user_logged_in_callback(sender, request, user, **kwargs):
-    if request.user.person.hospital is None:
+    if user.person.hospital is None:
         return
     loggerName = "UoR" if "UoR" in request.user.person.hospital.name else "Strong"
     logger = logging.getLogger(loggerName)
@@ -30,6 +32,8 @@ def user_logged_in_callback(sender, request, user, **kwargs):
 
 @receiver(user_logged_out)
 def user_logged_out_callback(sender, request, user, **kwargs):
+    if user.person.hospital is None:
+        return
     loggerName = "UoR" if "UoR" in request.user.person.hospital.name else "Strong"
     logger = logging.getLogger(loggerName)
     logger.info('logout name:{user} username:{username}'.format(
@@ -40,7 +44,7 @@ def user_logged_out_callback(sender, request, user, **kwargs):
 
 # Create your views here.
 @login_required
-def home(request, userid=None):
+def home(request):
     if request.user.person.is_patient:
         if not request.user.person.patient.name or not request.user.person.hospital:
             return redirect("update_patient")
@@ -105,6 +109,7 @@ def logs(request):
     print(os.path.isfile(fname))
     with open(fname) as f:
         content = f.readlines()
+    content = reversed(content)
     return render(request, 'users/logs.html', {
         'logs': content
     })
@@ -193,25 +198,25 @@ def create_nurse(request):
             nurse.hospital = Hospital.objects.get(pk=request.user.person.hospital_id)
             nurse.title = nurse_form.cleaned_data.get('title')
             nurse.is_nurse = True
-            content_type = ContentType.objects.get_for_model('Doctor')
+            content_type = ContentType.objects.get_for_model(Doctor)
             permission = Permission.objects.get(
                 codename='admit',
                 content_type=content_type,
             )
             nurse.user.user_permissions.add(permission.id)
-            content_type = ContentType.objects.get_for_model('Doctor')
+            content_type = ContentType.objects.get_for_model(Doctor)
             permission = Permission.objects.get(
                 codename='release',
                 content_type=content_type,
             )
             nurse.user.user_permissions.add(permission.id)
-            content_type = ContentType.objects.get_for_model('Doctor')
+            content_type = ContentType.objects.get_for_model(Doctor)
             permission = Permission.objects.get(
-                codename='view_calendar',
+                codename='view_cal',
                 content_type=content_type,
             )
             nurse.user.user_permissions.add(permission.id)
-            content_type = ContentType.objects.get_for_model('Doctor')
+            content_type = ContentType.objects.get_for_model(Doctor)
             permission = Permission.objects.get(
                 codename='view_med_info',
                 content_type=content_type,
@@ -225,6 +230,7 @@ def create_nurse(request):
             messages.error(request, 'Please correct the error below.')
     else:
         nurse_form = NurseForm()
+        del nurse_form.fields['hospital']
         account_form = SignupForm()
     return render(request, 'users/profile.html', {
         'nurse_form': nurse_form,
@@ -247,37 +253,37 @@ def create_doctor(request):
             doctor.specialty_field = doctor_form.cleaned_data.get('specialty_field')
             doctor.hospital = Hospital.objects.get(pk=request.user.person.hospital_id)
             doctor.is_doctor = True
-            content_type = ContentType.objects.get_for_model('Doctor')
+            content_type = ContentType.objects.get_for_model(Doctor)
             permission = Permission.objects.get(
                 codename='admit',
                 content_type=content_type,
             )
             doctor.user.user_permissions.add(permission.id)
-            content_type = ContentType.objects.get_for_model('Doctor')
+            content_type = ContentType.objects.get_for_model(Doctor)
             permission = Permission.objects.get(
                 codename='release',
                 content_type=content_type,
             )
             doctor.user.user_permissions.add(permission.id)
-            content_type = ContentType.objects.get_for_model('Doctor')
+            content_type = ContentType.objects.get_for_model(Doctor)
             permission = Permission.objects.get(
-                codename='view_calendar',
+                codename='view_cal',
                 content_type=content_type,
             )
             doctor.user.user_permissions.add(permission.id)
-            content_type = ContentType.objects.get_for_model('Doctor')
+            content_type = ContentType.objects.get_for_model(Doctor)
             permission = Permission.objects.get(
                 codename='create_med_info',
                 content_type=content_type,
             )
             doctor.user.user_permissions.add(permission.id)
-            content_type = ContentType.objects.get_for_model('Doctor')
+            content_type = ContentType.objects.get_for_model(Doctor)
             permission = Permission.objects.get(
                 codename='update_med_info',
                 content_type=content_type,
             )
             doctor.user.user_permissions.add(permission.id)
-            content_type = ContentType.objects.get_for_model('Doctor')
+            content_type = ContentType.objects.get_for_model(Doctor)
             permission = Permission.objects.get(
                 codename='view_med_info',
                 content_type=content_type,
@@ -291,6 +297,7 @@ def create_doctor(request):
             messages.error(request, 'Please correct the error below.')
     else:
         doctor_form = DoctorForm()
+        del doctor_form.fields['hospital']
         account_form = SignupForm()
     return render(request, 'users/profile.html', {
         'doctor_form': doctor_form,
@@ -312,6 +319,27 @@ def create_admin(request):
             admin.name = admin_form.cleaned_data.get('name')
             admin.hospital = Hospital.objects.get(pk=request.user.person.hospital_id)
             admin.is_admin = True
+            content_type = ContentType.objects.get_for_model(Admin)
+            permission = Permission.objects.get(
+                codename='transfer',
+                content_type=content_type,
+            )
+            admin.user.user_permissions.add(permission.id)
+            permission = Permission.objects.get(
+                codename='update_patient',
+                content_type=content_type,
+            )
+            admin.user.user_permissions.add(permission.id)
+            permission = Permission.objects.get(
+                codename='update',
+                content_type=content_type,
+            )
+            admin.user.user_permissions.add(permission.id)
+            permission = Permission.objects.get(
+                codename='logs',
+                content_type=content_type,
+            )
+            admin.user.user_permissions.add(permission.id)
             admin.save()
             messages.success(request, 'Your profile was successfully updated!')
             return redirect('update')
@@ -319,6 +347,7 @@ def create_admin(request):
             messages.error(request, 'Please correct the error below.')
     else:
         admin_form = AdminForm()
+        del admin_form.fields['hospital']
         account_form = SignupForm()
     return render(request, 'users/profile.html', {
         'doctor_form': admin_form,
@@ -385,21 +414,29 @@ def transfer_patient(request, pk):
     if request.method == 'POST':
         patient = Patient.objects.get(pk=pk)
         patient_form = PatientForm(request.POST, instance=patient)
-        if(patient_form.is_valid()):
-            patient.admitted = False
-            patient_form.save()
-            messages.success(request, 'Patient was transferred successfully!')
-            hospitals = Hospital.objects.exclude(pk=Patient.objects.get(pk=pk).hospital_id)
-            type = "admin" if request.user.person.is_admin else "doctor"
-            logger.info('transfer patient:{patient} by {user}:{type} from {currHospital} to {newHospital}'.format(
-                patient = patient.name,
-                user= request.user.person.name,
-                type = type,
-                currHospital = request.user.person.hospital.name,
-                newHospital = patient.hospital.name
-            ))
-        else:
-            messages.error(request, 'Incorrectly formatted request.')
+        patient_form.is_valid()
+        patient.admitted = False
+        patient.hospital = patient_form.cleaned_data.get('hospital')
+        if(Record.objects.filter(patient=pk, discharged=False).exists()):
+            record = Record.objects.get(patient=pk, discharged=False)
+            record.discharged = True
+            record.endDate = datetime.datetime.now()
+            record.save()
+
+        patient.save()
+
+        messages.success(request, 'Patient was transferred successfully!')
+        hospitals = Hospital.objects.exclude(pk=Patient.objects.get(pk=pk).hospital_id)
+        type = "admin" if request.user.person.is_admin else "doctor"
+        logger.info('Transfer patient:{patient} by {user}:{type} from {currHospital} to {newHospital}'.format(
+            patient = patient.name,
+            user= request.user.person.name,
+            type = type,
+            currHospital = request.user.person.hospital.name,
+            newHospital = patient.hospital.name
+        ))
+
+        return redirect("transfer_patients")
 
     else:
         if(request.user.person.is_admin):

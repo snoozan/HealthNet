@@ -32,14 +32,14 @@ class Statistics(models.Model):
 
 
     def avg_visits_length(self):
-        records = Record.objects.all()
+        records = Record.objects.filter(discharged=True)
         patient_visit = []
         for record in records:
-            patient_visit.append(datetime.timedelta(record.startDate, record.endDate))
+            patient_visit.append(record.endDate - record.startDate)
         return sum(patient_visit, datetime.timedelta()) / (len(patient_visit)+1)
 
     def get_popular_prescriptions(self):
-        names = [script.Title for script in Prescription.objects.all()]
+        names = [script.title for script in Prescription.objects.all()]
         return Counter(names).most_common(1)
 
     def get_most_common_reason(self):

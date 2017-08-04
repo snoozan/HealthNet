@@ -50,6 +50,12 @@ def create_patient_profile(sender, instance, created, **kwargs):
             content_type=content_type,
         )
         instance.user_permissions.add(permission)
+        content_type = ContentType.objects.get_for_model(Doctor)
+        permission = Permission.objects.get(
+            codename='view_med_info',
+            content_type=content_type,
+        )
+        instance.user_permissions.add(permission)
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):

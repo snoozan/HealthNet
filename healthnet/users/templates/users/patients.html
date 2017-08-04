@@ -1,6 +1,16 @@
 {% extends 'users/base.html' %}
 
 {% block content %}
+{% if transfer %}
+    <h2> Transfer Patients</h2>
+    <ul class="list-group">
+    {% for patient in patients %}
+    <li class="list-group-item">
+        <a href='{% url 'transfer' pk=patient.id %}'>{{ patient.name }}</a>
+    </li>
+    {% endfor %}
+    </ul>
+    {% else %}
 <h2>
     Patients of {{hospital.name}}
 </h2>
@@ -72,4 +82,5 @@
     {%  endif %}
 -->
 
+    {% endif %}
 {% endblock %}

@@ -116,7 +116,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'log_format': {
-            'format': '%(asctime)s %(module)s %(message)s'
+            'format': '%(asctime)s %(message)s'
         }
     },
     'handlers': {

@@ -6,7 +6,7 @@ from users.models.person import Patient, Doctor
 from .models.record import Record, RecordForm
 
 urlpatterns = [
-    url(r'^view$', views.viewMedical, name='view_medical'),
+    url(r'^view/$', views.viewMedical, name='view_medical'),
     url(r'^view/(?P<patientid>[0-9]+)$', views.viewMedical, name='view_medical'),
     url(r'^result/create/(?P<patientid>[0-9]+)$', views.createTestResult, name='create_result'),
     url(r'^result/update/(?P<resultid>[0-9]+)/$', views.updateTestResult, name='update_result'),
