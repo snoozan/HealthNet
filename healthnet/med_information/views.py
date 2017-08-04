@@ -254,6 +254,8 @@ def updateRecord(request, patientid):
         del record_form.fields['endDate']
         del record_form.fields['discharged']
 
+        loggerName = "UoR" if "UoR" in request.user.person.hospital.name else "Strong"
+        logger = logging.getLogger(loggerName)
         if record_form.is_valid():
             patient = Patient.objects.get(id = patientid)
             record = Record.objects.get(patient=patient, discharged = False)
@@ -270,7 +272,7 @@ def updateRecord(request, patientid):
                 record.save()
                 logger.info('Updated Record for {patient} by {user}:Doctor'.format(
                     user=request.user.person.name,
-                    patient=Record.objects.get(id=recordid).patient.name
+                    patient=Record.objects.get(id=patientid).patient.name
                 ))
                 messages.success(request, "Record Updated!")
                 return redirect('view_medical', patientid=record.patient.id)
@@ -295,7 +297,6 @@ def finalizeRecord(request, patientid):
         record_form = RecordForm(instance=Record.objects.get(patient=patientid, discharged=False))
         del record_form.fields['patient']
 
-        #if record_form.is_valid():
         record = Record.objects.get(patient=patientid, discharged=False)
         if request.user.person.is_doctor:
             record.endDate = datetime.datetime.now()
@@ -307,8 +308,6 @@ def finalizeRecord(request, patientid):
             record.save()
             messages.success(request, "Record Updated!")
             return redirect('view_patients')
-        #else:
-            #print('Form not valid')
     else:
         record_form = RecordForm(instance=Record.objects.get(patient=patientid, discharged=False))
         del record_form.fields['patient']

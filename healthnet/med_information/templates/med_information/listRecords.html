@@ -27,7 +27,9 @@
         <td>{{r.respirations_minute}} BPM</td>
         <td>{{r.reason}}</td>
         <td>{{r.description}}</td>
-
+        {% if r.discharged %}
+            <td><input type="button" onclick="location.href='{% url 'update_record' patientid=r.patient.id %}';" value="edit" /></td>
+        {% endif %}
     </tr>
     {% endfor %}
 </table>

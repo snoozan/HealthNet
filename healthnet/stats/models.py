@@ -32,7 +32,7 @@ class Statistics(models.Model):
 
 
     def avg_visits_length(self):
-        records = Record.objects.all()
+        records = Record.objects.filter(discharged=True)
         patient_visit = []
         for record in records:
             patient_visit.append(record.endDate - record.startDate)

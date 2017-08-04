@@ -11,8 +11,10 @@ from django.db import transaction
 from django.contrib.auth.signals import user_logged_in, user_logged_out, user_login_failed
 from django.dispatch import receiver
 
+import datetime
 import logging
 
+from med_information.models.record import Record
 from users.models import Hospital
 from .models.person import PatientForm, SignupForm, DoctorForm, NurseForm, AdminForm, Admin, Nurse
 from .models.person import Patient, Doctor, Person
@@ -412,21 +414,29 @@ def transfer_patient(request, pk):
     if request.method == 'POST':
         patient = Patient.objects.get(pk=pk)
         patient_form = PatientForm(request.POST, instance=patient)
-        if(patient_form.is_valid()):
-            patient.admitted = False
-            patient_form.save()
-            messages.success(request, 'Patient was transferred successfully!')
-            hospitals = Hospital.objects.exclude(pk=Patient.objects.get(pk=pk).hospital_id)
-            type = "admin" if request.user.person.is_admin else "doctor"
-            logger.info('Transfer patient:{patient} by {user}:{type} from {currHospital} to {newHospital}'.format(
-                patient = patient.name,
-                user= request.user.person.name,
-                type = type,
-                currHospital = request.user.person.hospital.name,
-                newHospital = patient.hospital.name
-            ))
-        else:
-            messages.error(request, 'Incorrectly formatted request.')
+        patient_form.is_valid()
+        patient.admitted = False
+        patient.hospital = patient_form.cleaned_data.get('hospital')
+        if(Record.objects.filter(patient=pk, discharged=False).exists()):
+            record = Record.objects.get(patient=pk, discharged=False)
+            record.discharged = True
+            record.endDate = datetime.datetime.now()
+            record.save()
+
+        patient.save()
+
+        messages.success(request, 'Patient was transferred successfully!')
+        hospitals = Hospital.objects.exclude(pk=Patient.objects.get(pk=pk).hospital_id)
+        type = "admin" if request.user.person.is_admin else "doctor"
+        logger.info('Transfer patient:{patient} by {user}:{type} from {currHospital} to {newHospital}'.format(
+            patient = patient.name,
+            user= request.user.person.name,
+            type = type,
+            currHospital = request.user.person.hospital.name,
+            newHospital = patient.hospital.name
+        ))
+
+        return redirect("transfer_patients")
 
     else:
         if(request.user.person.is_admin):
